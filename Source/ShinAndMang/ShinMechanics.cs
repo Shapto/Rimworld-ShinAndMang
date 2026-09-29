@@ -1,0 +1,84 @@
+﻿using RimWorld;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Verse;
+
+namespace ShinAndMang
+{
+    public class ShinMechanics
+    {
+        public static Hediff_ShinMastery GetMastery(Pawn pawn) => pawn?.health?.hediffSet?.GetFirstHediffOfDef(ShinDefOf.Shin_Mastery) as Hediff_ShinMastery;
+
+        public static Hediff_Shin GetActiveShin(Pawn pawn) => pawn?.health?.hediffSet?.hediffs.FirstOrDefault(hediff => hediff is Hediff_Shin) as Hediff_Shin;
+
+        public static bool IsShinActive(Pawn pawn) => GetActiveShin(pawn) != null;
+
+        public static float ActivationMoodCost(Pawn pawn) => GetMastery(pawn)?.TryGetComp<HediffComp_ShinActivation>()?.Props.activationMoodCost ?? 0f;
+
+        private static float VariantCommonality(HediffDef def) => 1f;
+
+        ///Shin (心) is a combat technique.
+        public static bool IsInCombat(Pawn pawn)
+        {
+            if (pawn == null || pawn.Dead || pawn.Downed) return false;
+            if (pawn.Faction == Faction.OfPlayer) return pawn.Drafted;
+            return false;
+        }
+
+        public static bool CanActivateShin(Pawn pawn, out string disabledReason)
+        {
+            disabledReason = null;
+            Hediff_ShinMastery mastery = GetMastery(pawn);
+
+            if (mastery == null) { disabledReason = "ShinAndMang_NoShin".Translate(); return false; }
+            if (mastery.Variant == null) { disabledReason = "ShinAndMang_NoVariant".Translate(); return false; }
+            if (IsShinActive(pawn)) { disabledReason = "ShinAndMang_AlreadyActive".Translate(); return false; }
+            if (!IsInCombat(pawn)) { disabledReason = "ShinAndMang_NotInCombat".Translate(); return false; }
+
+            Need_Mood mood = pawn.needs?.mood;
+            if (mood == null) { disabledReason = "ShinAndMang_NoMood".Translate(); return false; }
+
+            float moodCost = ActivationMoodCost(pawn);
+            if (mood.CurLevel < moodCost)
+            {
+                disabledReason = "ShinAndMang_NotEnoughMood".Translate(mood.CurLevel.ToStringPercent(), moodCost.ToStringPercent());
+                return false;
+            }
+            return true;
+        }
+
+        public static bool TryActivateShin(Pawn pawn)
+        {
+            if (!CanActivateShin(pawn, out _)) return false;
+
+            pawn.needs.mood.CurLevel -= ActivationMoodCost(pawn);
+            pawn.health.AddHediff(GetMastery(pawn).Variant);
+            return true;
+        }
+
+        public static void EndShin(Pawn pawn)
+        {
+            Hediff_Shin activeShin = GetActiveShin(pawn);
+            if (activeShin != null) pawn.health.RemoveHediff(activeShin);
+        }
+
+
+        public static HediffDef RollVariant()
+        {
+            var variantPool = DefDatabase<HediffDef>.AllDefs
+                .Where(d => d.hediffClass != null && typeof(Hediff_Shin).IsAssignableFrom(d.hediffClass));
+
+            return variantPool.TryRandomElementByWeight(VariantCommonality, out HediffDef rolledVariant) ? rolledVariant : null;
+        }
+
+        ///Call whenever mastery changes, so an active Shin (心) picks up its new stage.</summary>
+        public static void NotifyMasteryChanged(Pawn pawn)
+        {
+            Hediff_Shin activeShin = GetActiveShin(pawn);
+            if (activeShin != null) pawn.health.Notify_HediffChanged(activeShin);
+        }
+    }
+}

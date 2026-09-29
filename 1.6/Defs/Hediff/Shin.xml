@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<HediffDef Name="ShinBase" Abstract="True">
+		<hediffClass>ShinAndMang.Hediff_Shin</hediffClass>
+		<description>placeholder</description>
+		<defaultLabelColor>(1, 0.82, 0.35)</defaultLabelColor>
+		<isBad>false</isBad>
+		<everCurableByItem>false</everCurableByItem>
+		<initialSeverity>1</initialSeverity>
+		<maxSeverity>1</maxSeverity>
+		<stages>
+			<li>
+				<minSeverity>0</minSeverity>
+				<capMods>
+					<li>
+						<capacity>Moving</capacity>
+						<offset>0.04</offset>
+					</li>
+				</capMods>
+				<statFactors>
+					<IncomingDamageFactor>0.95</IncomingDamageFactor>
+				</statFactors>
+				<statOffsets>
+					<PainShockThreshold>0.02</PainShockThreshold>
+					<ArmorRating_Sharp>0.30</ArmorRating_Sharp>
+					<ArmorRating_Blunt>0.15</ArmorRating_Blunt>
+					<ArmorRating_Heat>0.05</ArmorRating_Heat>
+				</statOffsets>
+			</li>
+			<li>
+				<minSeverity>1</minSeverity>
+				<capMods>
+					<li>
+						<capacity>Moving</capacity>
+						<offset>0.40</offset>
+					</li>
+					<li>
+						<capacity>Manipulation</capacity>
+						<offset>0.40</offset>
+					</li>
+				</capMods>
+				<statFactors>
+					<IncomingDamageFactor>0.65</IncomingDamageFactor>
+					<MeleeDamageFactor>1.30</MeleeDamageFactor>
+					<AimingDelayFactor>0.85</AimingDelayFactor>
+				</statFactors>
+				<statOffsets>
+					<PainShockThreshold>0.30</PainShockThreshold>
+					<ArmorRating_Sharp>1.20</ArmorRating_Sharp>
+					<ArmorRating_Blunt>0.80</ArmorRating_Blunt>
+					<ArmorRating_Heat>0.30</ArmorRating_Heat>
+				</statOffsets>
+			</li>
+		</stages>
+	</HediffDef>
+
+	<HediffDef ParentName="ShinBase">
+		<defName>Shin_Fate</defName>
+		<label>Shin (心) - Fate</label>
+	</HediffDef>
+
+</Defs>
