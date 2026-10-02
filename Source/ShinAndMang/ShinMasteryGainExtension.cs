@@ -13,6 +13,9 @@ namespace ShinAndMang
         /// x = current mastery (0..1), y = how much of each gain actually applies.
         public SimpleCurve gainCurve;
 
+        ///How likely each starting mastery is for pawns generated with Shin (心). x = mastery, y = relative weight.
+        public SimpleCurve spawnMasteryWeights;
+
         public float combatGainPerHour = 0.01f;         // base mastery per in-game hour of real fighting
         public int recentCombatTicks = 600;             // "fighting" = attacked or was hit within this many ticks
         public float woundIntensityWeight = 1.5f;       // added intensity at 100% missing health

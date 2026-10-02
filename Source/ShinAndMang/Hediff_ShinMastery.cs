@@ -50,7 +50,7 @@ namespace ShinAndMang
         {
             base.PostAdd(dinfo);
             if (variant == null) variant = ShinMechanics.RollVariant();
-            if (pawn.Faction == Faction.OfPlayer && pawn.Spawned)
+            if (pawn.Spawned && pawn.Faction != null && pawn.Faction.IsPlayer)
             {
                 string variantLabel = variant?.label ?? "?";
                 Find.LetterStack.ReceiveLetter("ShinAndMang_LearnedShinLabel".Translate(), "ShinAndMang_LearnedShinText".Translate(pawn.LabelShort, variantLabel), LetterDefOf.PositiveEvent, pawn);

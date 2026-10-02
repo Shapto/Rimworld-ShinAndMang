@@ -61,6 +61,7 @@
     <Compile Include="Hediff_Shin.cs" />
     <Compile Include="Hediff_ShinMastery.cs" />
     <Compile Include="InteractionWorker_ShinTips.cs" />
+    <Compile Include="Patch_PawnGenerator_GeneratePawn.cs" />
     <Compile Include="ShinAndMangMod.cs" />
     <Compile Include="ShinAndMangSettings.cs" />
     <Compile Include="ShinDefOf.cs" />
