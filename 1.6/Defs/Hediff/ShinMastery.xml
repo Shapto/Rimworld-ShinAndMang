@@ -76,6 +76,19 @@
 				<iconPath>Icons/Shin</iconPath>
 			</li>
 		</comps>
+		<modExtensions>
+			<li Class="ShinAndMang.ShinMasteryGainExtension">
+				<gainCurve>
+					<points>
+						<li>(0.00, 1.00)</li>
+						<li>(0.45, 0.50)</li>
+						<li>(0.72, 0.20)</li>
+						<li>(0.94, 0.07)</li>
+						<li>(1.00, 0.05)</li>
+					</points>
+				</gainCurve>
+			</li>
+		</modExtensions>
 	</HediffDef>
 
 </Defs>

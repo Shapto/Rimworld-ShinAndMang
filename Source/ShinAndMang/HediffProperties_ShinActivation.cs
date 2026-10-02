@@ -62,8 +62,7 @@ namespace ShinAndMang
                     defaultLabel = "DEV: Shin Mastery +10%",
                     action = () =>
                     {
-                        parent.Severity = Mathf.Min(1f, parent.Severity + 0.1f);
-                        ShinMechanics.NotifyMasteryChanged(parent.pawn);
+                        ShinMechanics.GainMastery(parent.pawn, 0.1f);
                     }
                 };
                 yield return new Command_Action

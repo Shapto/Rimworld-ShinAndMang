@@ -61,6 +61,7 @@
     <Compile Include="Hediff_ShinMastery.cs" />
     <Compile Include="ShinDefOf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShinMasteryGainExtension.cs" />
     <Compile Include="ShinMechanics.cs" />
     <Compile Include="ShinStageInterpolator.cs" />
     <Compile Include="ShinVariant.cs" />

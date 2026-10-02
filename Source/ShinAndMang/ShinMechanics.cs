@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Verse;
 
 namespace ShinAndMang
@@ -28,6 +29,58 @@ namespace ShinAndMang
             if (pawn == null || pawn.Dead || pawn.Downed) return false;
             if (pawn.Faction == Faction.OfPlayer) return pawn.Drafted;
             return false;
+        }
+
+        /// Every mastery gain calls this one.
+        public static void GainMastery(Pawn pawn, float baseAmount)
+        {
+            Hediff_ShinMastery mastery = GetMastery(pawn);
+            if (mastery == null) return;
+
+            ShinMasteryGainExtension gainSettings = mastery.def.GetModExtension<ShinMasteryGainExtension>();
+
+            float multiplier = gainSettings?.gainCurve?.Evaluate(mastery.Severity) ?? 1f;
+            mastery.Severity = Mathf.Min(1f, mastery.Severity + baseAmount * multiplier);
+
+            NotifyMasteryChanged(pawn);
+        }
+
+        /// <summary>
+        /// True if the pawn attacked or was hit recently, not just standing around drafted.
+        /// </summary>
+        public static bool IsActivelyFighting(Pawn pawn, int recentCombatTicks)
+        {
+            int currentTick = Find.TickManager.TicksGame;
+            bool attackedRecently = currentTick - pawn.LastAttackTargetTick <= recentCombatTicks;
+            bool harmedRecently = currentTick - pawn.mindState.lastHarmTick <= recentCombatTicks;
+            return attackedRecently || harmedRecently;
+        }
+
+        /// <summary>
+        /// How emotional the fight is for this pawn: 1 = ordinary, up to maximumIntensity.
+        /// </summary>
+        public static float CombatIntensity(Pawn pawn, ShinMasteryGainExtension gainSettings)
+        {
+            float intensity = 1f;
+            Need_Mood mood = pawn.needs?.mood;
+            intensity += (1f - pawn.health.summaryHealth.SummaryHealthPercent) * gainSettings.woundIntensityWeight;
+            if (mood != null)
+            {
+                intensity += (Mathf.Abs(mood.CurLevel - 0.5f) * 2f) * gainSettings.moodIntensityWeight;
+            }
+            if (pawn.Spawned)
+            {
+                foreach (Pawn ally in pawn.Map.mapPawns.SpawnedPawnsInFaction(pawn.Faction))
+                {
+                    if (ally == pawn) continue;
+                    if (ally.Downed && pawn.Position.InHorDistOf(ally.Position, gainSettings.allyDownedRadius))
+                    {
+                        intensity += gainSettings.allyDownedIntensity;
+                        break;
+                    }
+                }
+            }
+            return Math.Min(intensity, gainSettings.maximumIntensity);
         }
 
         public static bool CanActivateShin(Pawn pawn, out string disabledReason)
