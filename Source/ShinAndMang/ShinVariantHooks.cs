@@ -29,6 +29,20 @@ namespace ShinAndMang
             }
         }
 
+        /// <summary>
+        /// All targeting readout lines from the user's active variants against this target, or an empty string.
+        /// </summary>
+        public static string TargetingReadout(Pawn shinUser, Thing target)
+        {
+            var readoutLines = new StringBuilder();
+            foreach (ShinVariant variant in ActiveVariants(shinUser))
+            {
+                string readout = variant.TargetingReadout(target);
+                if (!readout.NullOrEmpty()) readoutLines.AppendLine(readout);
+            }
+            return readoutLines.ToString().TrimEndNewlines();
+        }
+
         public static void ApplyExtraDamage(Thing target, DamageInfo extraDamage)
         {
             IsApplyingExtraDamage = true;

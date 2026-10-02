@@ -9,31 +9,30 @@ using Verse;
 
 namespace ShinAndMang
 {
+    /// <summary>
+    /// Fate: refusing to fall. Grows more dangerous as death nears, shrugs off pain,
+    /// and overpowers those whose will is weaker.
+    /// </summary>
     public class ShinVariant_Fate : ShinVariant
     {
-        private const float MissingHealthPerDamageUp = 0.15f;
-        private const int MaximumDamageUp = 5;
-        private const float DamageBonusPerDamageUp = 0.05f;
+        // Wounds
+        private const float MissingHealthForFullEffect = 0.5f;      // full effect once half of health is gone
+        private const float MaximumWoundDamageBonus = 0.30f;
+        private const float MaximumPainShockThresholdBonus = 0.25f;
 
-        private const float MissingHealthPerAttackPowerUp = 0.40f;
-        private const int MaximumAttackPowerUp = 2;
-        private const float AccuracyBonusPerAttackPowerUp = 0.05f;
+        // Will
+        private const float DamageBonusPerMoodDifference = 0.5f;    // +1% damage per 2% mood difference
+        private const float MaximumWillDamageBonus = 0.30f;
 
-        private const float MoodDifferencePerPercentDamage = 0.02f;
-        private const float MaximumMoodDamageBonus = 0.30f;
+        /// <summary>
+        /// 0 when unhurt, 1 once half of health is gone.
+        /// </summary>
+        private float WoundProgress => Mathf.Clamp01((1f - ShinUser.health.summaryHealth.SummaryHealthPercent) / MissingHealthForFullEffect);
 
-        // Small margin so values like 0.30 / 0.15 don't round down to 1.999.
-        private const float RoundingMargin = 0.0001f;
+        public float WoundDamageBonus => WoundProgress * MaximumWoundDamageBonus;
+        public float PainShockThresholdBonus => WoundProgress * MaximumPainShockThresholdBonus;
 
-        private float MissingHealth => 1f - ShinUser.health.summaryHealth.SummaryHealthPercent;
-
-        public int DamageUpStacks
-            => Mathf.Min(MaximumDamageUp, Mathf.FloorToInt(MissingHealth / MissingHealthPerDamageUp + RoundingMargin));
-
-        public int AttackPowerUpStacks
-            => Mathf.Min(MaximumAttackPowerUp, Mathf.FloorToInt(MissingHealth / MissingHealthPerAttackPowerUp + RoundingMargin));
-
-        private float MoodDamageBonusAgainst(Thing target)
+        public float WillDamageBonusAgainst(Thing target)
         {
             Need_Mood userMood = ShinUser.needs?.mood;
             Need_Mood targetMood = (target as Pawn)?.needs?.mood;
@@ -41,44 +40,49 @@ namespace ShinAndMang
 
             float moodDifference = userMood.CurLevel - targetMood.CurLevel;
             if (moodDifference <= 0f) return 0f;
-
-            float damageBonus = Mathf.Floor(moodDifference / MoodDifferencePerPercentDamage + RoundingMargin) * 0.01f;
-            return Mathf.Min(MaximumMoodDamageBonus, damageBonus);
+            return Mathf.Min(MaximumWillDamageBonus, moodDifference * DamageBonusPerMoodDifference);
         }
+
+        /// <summary>
+        /// Used both for the actual hit and for the targeting readout, so they always match.
+        /// </summary>
+        public float DamageMultiplierAgainst(Thing target) => 1f + WoundDamageBonus + WillDamageBonusAgainst(target);
 
         // Damage
 
         public override void ModifyOutgoingDamage(Thing target, ref DamageInfo damageInfo)
         {
-            float damageMultiplier = 1f + DamageUpStacks * DamageBonusPerDamageUp + MoodDamageBonusAgainst(target);
+            float damageMultiplier = DamageMultiplierAgainst(target);
             if (damageMultiplier != 1f) damageInfo.SetAmount(damageInfo.Amount * damageMultiplier);
         }
 
-        // Accuracy
+        // Stats
 
         public override IEnumerable<StatDef> AffectedStats
         {
-            get
+            get 
             {
-                yield return StatDefOf.MeleeHitChance;
-                yield return StatDefOf.ShootingAccuracyPawn;
+                yield return StatDefOf.PainShockThreshold; 
             }
         }
 
-        public override float GetStatFactor(StatDef stat)
+        public override float GetStatOffset(StatDef stat) => stat == StatDefOf.PainShockThreshold ? PainShockThresholdBonus : 0f;
+
+        // Targeting
+
+        public override string TargetingReadout(Thing target)
         {
-            if (stat == StatDefOf.MeleeHitChance || stat == StatDefOf.ShootingAccuracyPawn)
-                return 1f + AttackPowerUpStacks * AccuracyBonusPerAttackPowerUp;
-            return 1f;
+            float damageBonus = DamageMultiplierAgainst(target) - 1f;
+            if (damageBonus <= 0f) return null;
+            return "ShinAndMang_Fate_Targeting".Translate(parent.LabelCap, damageBonus.ToStringPercent());
         }
 
         // Tooltip
 
         public override string EffectDescription => "ShinAndMang_Fate_Effect".Translate(
-            DamageUpStacks,
-            (DamageUpStacks * DamageBonusPerDamageUp).ToStringPercent(),
-            AttackPowerUpStacks,
-            (AttackPowerUpStacks * AccuracyBonusPerAttackPowerUp).ToStringPercent());
+            WoundDamageBonus.ToStringPercent(),
+            PainShockThresholdBonus.ToStringPercent(),
+            MaximumWillDamageBonus.ToStringPercent());
     }
 }
 

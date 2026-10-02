@@ -101,6 +101,13 @@ namespace ShinAndMang
         /// </summary>
         public virtual IEnumerable<StatDef> AffectedStats => Enumerable.Empty<StatDef>();
 
+        // Targeting
+
+        /// <summary>
+        /// A short line shown when the player hovers a target with this Shin (心) user selected. Null for nothing.
+        /// </summary>
+        public virtual string TargetingReadout(Thing target) => null;
+
         public virtual float GetStatOffset(StatDef stat) => 0f;
         public virtual float GetStatFactor(StatDef stat) => 1f;
 

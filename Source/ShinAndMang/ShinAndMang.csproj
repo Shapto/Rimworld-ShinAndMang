@@ -53,6 +53,14 @@
       <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompUseEffect_GainShin.cs" />
@@ -61,6 +69,7 @@
     <Compile Include="Hediff_Shin.cs" />
     <Compile Include="Hediff_ShinMastery.cs" />
     <Compile Include="InteractionWorker_ShinTips.cs" />
+    <Compile Include="MapComponent_ShinTargetingReadout.cs" />
     <Compile Include="Patch_PawnGenerator_GeneratePawn.cs" />
     <Compile Include="ShinAndMangMod.cs" />
     <Compile Include="ShinAndMangSettings.cs" />

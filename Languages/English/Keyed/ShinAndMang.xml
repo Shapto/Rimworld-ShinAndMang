@@ -17,5 +17,6 @@
   <ShinAndMang_VariantEffectsHeader>Variant effects:</ShinAndMang_VariantEffectsHeader>
   <ShinAndMang_AlreadyKnowsShin>Already knows Shin (心).</ShinAndMang_AlreadyKnowsShin>
   <ShinAndMang_CannotLearnShin>Only adults capable of strong emotion can learn Shin (心).</ShinAndMang_CannotLearnShin>
-  <ShinAndMang_Fate_Effect>- Damage Up: {0}/5 (+{1} damage). One per 15% missing health.\n- Attack Power Up: {2}/2 (+{3} accuracy). One per 40% missing health.\n- Against targets with lower mood: +1% damage per 2% mood difference (max +30%).</ShinAndMang_Fate_Effect>
+  <ShinAndMang_Fate_Effect>- Wounds fuel this Shin (心): currently +{0} damage and +{1} pain shock threshold, growing as health falls.\n- Against those with lower mood: +1% damage per 2% mood difference, up to +{2}.</ShinAndMang_Fate_Effect>
+  <ShinAndMang_Fate_Targeting>{0}: +{1} damage</ShinAndMang_Fate_Targeting>
 </LanguageData>
