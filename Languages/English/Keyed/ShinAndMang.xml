@@ -19,4 +19,26 @@
   <ShinAndMang_CannotLearnShin>Only adults capable of strong emotion can learn Shin (心).</ShinAndMang_CannotLearnShin>
   <ShinAndMang_Fate_Effect>- Wounds fuel this Shin (心): currently +{0} damage and +{1} pain shock threshold, growing as health falls.\n- Against those with lower mood: +1% damage per 2% mood difference, up to +{2}.</ShinAndMang_Fate_Effect>
   <ShinAndMang_Fate_Targeting>{0}: +{1} damage</ShinAndMang_Fate_Targeting>
+  <ShinAndMang_Disgrace_Shame>shame {0}</ShinAndMang_Disgrace_Shame>
+  <ShinAndMang_Disgrace_Effect>- Fire and burn damage dealt: +{0}.\n- Staggers caused by the user last {1}s longer.\n- Shame: {2}. Builds when struck, fades over time. Currently -{3} damage taken and +{4} move speed.</ShinAndMang_Disgrace_Effect>
+  <ShinAndMang_Procuration_Effect>- Move speed +{0}, aiming speed +{1}.\n- Accuracy and melee hit chance +{2}, melee dodge chance +{3}.\n- Damage dealt: currently +{4}. Increases as health falls, up to +40% at half health or lower.</ShinAndMang_Procuration_Effect>
+  <ShinAndMang_Procuration_Targeting>{0}: +{1} damage</ShinAndMang_Procuration_Targeting>
+  <ShinAndMang_DihuiStar_Effect>- Move speed +{0}.\n- Damage taken from anyone the user is not currently fighting: -{1}.</ShinAndMang_DihuiStar_Effect>
+  <ShinAndMang_RedGaze_Effect>- All damage dealt: +{0}. Increases with mastery, up to +50%.</ShinAndMang_RedGaze_Effect>
+  <ShinAndMang_RedGaze_Targeting>{0}: +{1} damage</ShinAndMang_RedGaze_Targeting>
+  <ShinAndMang_WithstandTheSmoke_Effect>- Move speed: currently +{0}.\n- Accuracy and melee hit chance: currently +{1}. Damage dealt: currently +{2}. Both increase with mood above 50%, reaching their maximum at 95% mood.\n- Against targets who are not fighting the user: +{3} damage.</ShinAndMang_WithstandTheSmoke_Effect>
+  <ShinAndMang_WithstandTheSmoke_Targeting>{0}: +{1} damage</ShinAndMang_WithstandTheSmoke_Targeting>
+  <ShinAndMang_Radiance_Effect>- On manifesting Shin (心): mood +{0}.\n- Once per activation, when health falls below {1}: damage taken -{2} for {3} seconds. ({4})</ShinAndMang_Radiance_Effect>
+  <ShinAndMang_Radiance_Ready>ready</ShinAndMang_Radiance_Ready>
+  <ShinAndMang_Radiance_Spent>already used</ShinAndMang_Radiance_Spent>
+  <ShinAndMang_Radiance_Flaring>radiant {0}s</ShinAndMang_Radiance_Flaring>
+  <ShinAndMang_Radiance_FlareText>Radiance</ShinAndMang_Radiance_FlareText>
+  <ShinAndMang_Radiance_FlareMessage>{0}'s Radiance flares!</ShinAndMang_Radiance_FlareMessage>
+  <ShinAndMang_Psychoment_Protection>protection {0}</ShinAndMang_Psychoment_Protection>
+  <ShinAndMang_Psychoment_Effect>- Melee dodge chance +{0}. Damage taken -{1}.\n- Spending mood on Shin (心) or Mang (望) grants protection, fading over time: 3% damage reduction per 1% mood spent, up to 50%. Currently {2}.\n- Psychic sensitivity: x{3}.</ShinAndMang_Psychoment_Effect>
+  <ShinAndMang_Sidekick_Armor>armor {0}</ShinAndMang_Sidekick_Armor>
+  <ShinAndMang_Sidekick_Effect>- Being hit builds up natural armor, fading over time: currently +{0} sharp armor (up to +{1}), with blunt and heat armor in proportion.\n- Damage dealt +{2}. Against anyone who recently attacked an ally near the user: an additional +{3}.\n- When hit with an ally nearby: mood +{4}.</ShinAndMang_Sidekick_Effect>
+  <ShinAndMang_Sidekick_Targeting>{0}: +{1} damage</ShinAndMang_Sidekick_Targeting>
+  <ShinAndMang_Hornet_Effect>- Accuracy and melee hit chance +{0}. Melee dodge chance +{1}.\n- Damage dealt: currently +{2}. Increases with mood above 50%, up to +{3} at 95% mood.\n- Hitting whoever last hurt the user (within 10 seconds): mood +{4}.</ShinAndMang_Hornet_Effect>
+  <ShinAndMang_Hornet_Targeting>{0}: +{1} damage</ShinAndMang_Hornet_Targeting>
 </LanguageData>

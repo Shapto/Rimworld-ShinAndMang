@@ -111,6 +111,13 @@ namespace ShinAndMang
         public virtual float GetStatOffset(StatDef stat) => 0f;
         public virtual float GetStatFactor(StatDef stat) => 1f;
 
+        // Mood
+
+        /// <summary>
+        /// The user just spent mood on Shin (心) or Mang (望). The amount is what was actually lost, after clamping.
+        /// </summary>
+        public virtual void Notify_MoodSpent(float moodSpent) { }
+
         // Tooltip
 
         /// <summary>What this variant does, shown below the base Shin (心) stats. Can include live values.</summary>
@@ -134,5 +141,29 @@ namespace ShinAndMang
         /// Extra damage from a variant effect (e.g. fire on hit), without re-triggering the variant's own hooks.
         /// </summary>
         protected void DealExtraDamage(Thing target, DamageInfo extraDamage) => ShinVariantHooks.ApplyExtraDamage(target, extraDamage);
+
+        /// <summary>
+        /// True if the fighter is currently fighting the opponent: targeting them, or acting on them.
+        /// </summary>
+        protected static bool IsFighting(Pawn fighter, Thing opponent)
+        {
+            if (fighter == null || opponent == null) return false;
+            if (fighter.mindState?.enemyTarget == opponent) return true;
+            return fighter.CurJob != null && fighter.CurJob.targetA.Thing == opponent;
+        }
+
+        /// <summary>
+        /// True if another pawn of the user's faction, standing or downed, is within the radius.
+        /// </summary>
+        protected bool IsAllyNearby(float radius)
+        {
+            if (!ShinUser.Spawned || ShinUser.Faction == null) return false;
+
+            foreach (Pawn ally in ShinUser.Map.mapPawns.SpawnedPawnsInFaction(ShinUser.Faction))
+            {
+                if (ally != ShinUser && !ally.Dead && ShinUser.Position.InHorDistOf(ally.Position, radius)) return true;
+            }
+            return false;
+        }
     }
 }

@@ -140,6 +140,22 @@ namespace ShinAndMang
             return Math.Min(intensity, gainSettings.maximumIntensity);
         }
 
+        /// <summary>
+        /// The only place mood is spent on Shin (心) or Mang (望). Tells the user's active variant how much was spent.
+        /// </summary>
+        public static void SpendMood(Pawn pawn, float moodCost)
+        {
+            Need_Mood mood = pawn.needs?.mood;
+            if (mood == null || moodCost <= 0f) return;
+
+            float moodBefore = mood.CurLevel;
+            mood.CurLevel -= moodCost;
+            float moodSpent = moodBefore - mood.CurLevel;
+
+            foreach (ShinVariant variant in ShinVariantHooks.ActiveVariants(pawn))
+                variant.Notify_MoodSpent(moodSpent);
+        }
+
         public static bool CanActivateShin(Pawn pawn, out string disabledReason)
         {
             disabledReason = null;
@@ -166,8 +182,9 @@ namespace ShinAndMang
         {
             if (!CanActivateShin(pawn, out _)) return false;
 
-            pawn.needs.mood.CurLevel -= ActivationMoodCost(pawn);
+            float moodCost = ActivationMoodCost(pawn);
             pawn.health.AddHediff(GetMastery(pawn).Variant);
+            SpendMood(pawn, moodCost);
             return true;
         }
 
