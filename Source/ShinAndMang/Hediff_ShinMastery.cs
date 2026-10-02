@@ -19,7 +19,7 @@ namespace ShinAndMang
         //prevents removal of mastery at 0% as its supposed to start at 0
         public override bool ShouldRemove => false;
 
-        private const int MeditationCheckIntervalTicks = 250;
+        private const int CheckIntervalTicks = 250;
 
         // "Shin (心) Sovereign (100%)"
         public override string LabelInBrackets
@@ -36,14 +36,41 @@ namespace ShinAndMang
         public override void PostTick()
         {
             base.PostTick();
-            if (!pawn.IsHashIntervalTick(MeditationCheckIntervalTicks)) return;
+            if (!pawn.IsHashIntervalTick(CheckIntervalTicks)) return;
+            TryAutoActivateShin();
             if (!ModsConfig.RoyaltyActive || !pawn.Spawned) return;
             bool isMeditating = pawn.CurJobDef == JobDefOf.Meditate;
             bool isWalking = pawn.pather.MovingNow;
             if (isMeditating && !isWalking)
             {
-                ShinMechanics.GainMeditationMastery(pawn, MeditationCheckIntervalTicks);
+                ShinMechanics.GainMeditationMastery(pawn, CheckIntervalTicks);
             }
+        }
+
+        /// <summary>
+        /// AI pawns manifest Shin (心) on their own when a fight starts.
+        /// </summary>
+        private void TryAutoActivateShin()
+        {
+            if (!pawn.Spawned) return;
+            // The player decides for their own pawns.
+            if (pawn.Faction != null && pawn.Faction.IsPlayer) return;
+            if (ShinMechanics.IsShinActive(pawn)) return;
+
+            ShinMasteryGainExtension gainSettings = ShinDefOf.Shin_Mastery.GetModExtension<ShinMasteryGainExtension>();
+            if (gainSettings == null) return;
+
+            // Only once the fight has become emotional enough.
+            if (ShinMechanics.CombatIntensity(pawn, gainSettings) < gainSettings.aiActivationIntensity) return;
+
+            // Don't spend the last of their mood and break right after.
+            Need_Mood mood = pawn.needs?.mood;
+            if (mood == null) return;
+            float moodAfterCost = mood.CurLevel - ShinMechanics.ActivationMoodCost(pawn);
+            if (moodAfterCost <= pawn.mindState.mentalBreaker.BreakThresholdMinor) return;
+
+            // Checks being in combat and affording the cost itself.
+            ShinMechanics.TryActivateShin(pawn);
         }
 
         public override void PostAdd(DamageInfo? dinfo)

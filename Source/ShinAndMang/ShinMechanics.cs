@@ -60,8 +60,11 @@ namespace ShinAndMang
         public static bool IsInCombat(Pawn pawn)
         {
             if (pawn == null || pawn.Dead || pawn.Downed) return false;
-            if (pawn.Faction == Faction.OfPlayer) return pawn.Drafted;
-            return false;
+            if (pawn.Faction != null && pawn.Faction.IsPlayer) return pawn.Drafted;
+            bool hasEnemyTarget = pawn.mindState.enemyTarget != null;
+            ShinMasteryGainExtension gainSettings = ShinDefOf.Shin_Mastery.GetModExtension<ShinMasteryGainExtension>();
+            bool foughtRecently = gainSettings != null && IsActivelyFighting(pawn, gainSettings.recentCombatTicks);
+            return (hasEnemyTarget || foughtRecently);
         }
 
         /// Every mastery gain calls this one.

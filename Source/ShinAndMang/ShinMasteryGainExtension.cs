@@ -29,5 +29,6 @@ namespace ShinAndMang
         public float teachSelectionWeight = 0.01f;           // much rarer than tips
         public float teachChanceAtFullMastery = 0.3f;        // success chance scales with the teacher's mastery
         public float meditationGainPerHour = 0.0005f;   //0.05% per hour of meditation
+        public float aiActivationIntensity = 2f; // AI pawns manifest Shin (心) only once the fight is this intense
     }
 }
