@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompUseEffect_GainShin.cs" />
     <Compile Include="Graphic_FlickerSized.cs" />
     <Compile Include="HediffProperties_ShinActivation.cs" />
     <Compile Include="Hediff_Shin.cs" />

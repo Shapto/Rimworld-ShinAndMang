@@ -49,10 +49,6 @@ namespace ShinAndMang
                 if (Rand.Chance(chance))
                 {
                     recipient.health.AddHediff(ShinDefOf.Shin_Mastery);
-                    letterLabel = "ShinAndMang_TaughtShinLabel".Translate();
-                    letterText = "ShinAndMang_TaughtShinText".Translate(initiator.LabelShort, recipient.LabelShort);
-                    letterDef = LetterDefOf.PositiveEvent;
-                    lookTargets = recipient;
                 }
                 return;
             }

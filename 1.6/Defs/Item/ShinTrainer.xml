@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="ResourceBase">
+    <defName>Shin_ArtOfShin</defName>
+    <label>The Art of Shin (心)</label>
+    <description>A worn, heavily annotated book originating from a fallen urbworld on the art of Shin (心), a technique of the heart and mind. Its author writes that Shin (心) asks for no augmentations and no expensive upkeep: only the willingness to empty oneself and let one's heaviest feelings and memories fill the void.\n\nThose who walk the path long enough learn to shape their resolve into Mang (望), rings of light that empower their strikes. The author warns that the path never ends, and that every step is harder than the last.</description>
+    <graphicData>
+        <texPath>Things/Item/ArtOfShin</texPath>
+        <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <stackLimit>1</stackLimit>
+    <thingCategories>
+      <li>ItemsMisc</li>
+    </thingCategories>
+    <statBases>
+      <MarketValue>1500</MarketValue>
+      <Mass>0.3</Mass>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Usable">
+        <useJob>UseItem</useJob>
+        <useLabel>Read The Art of Shin (心)</useLabel>
+        <useDuration>1200</useDuration>
+      </li>
+      <li Class="CompProperties_UseEffect">
+        <compClass>ShinAndMang.CompUseEffect_GainShin</compClass>
+      </li>
+      <li Class="CompProperties_UseEffectDestroySelf" />
+    </comps>
+  </ThingDef>
+</Defs>
