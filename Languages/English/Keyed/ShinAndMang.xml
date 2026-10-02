@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <ShinAndMang_ShinGizmoLabel>Shin (心)</ShinAndMang_ShinGizmoLabel>
+  <ShinAndMang_SettingAllowTeaching>Allow teaching Shin (心) through conversation</ShinAndMang_SettingAllowTeaching>
   <ShinAndMang_ShinGizmoDescription>Manifest Shin (心), strengthening the body.\n\nCosts {0} mood. Only lasts while drafted.</ShinAndMang_ShinGizmoDescription>
   <ShinAndMang_ShinFades>{0}'s Shin (心) fades.</ShinAndMang_ShinFades>
   <ShinAndMang_NoShin>Doesn't know Shin (心).</ShinAndMang_NoShin>
@@ -9,6 +10,8 @@
   <ShinAndMang_NotInCombat>Must be drafted.</ShinAndMang_NotInCombat>
   <ShinAndMang_NoMood>Has no mood.</ShinAndMang_NoMood>
   <ShinAndMang_NotEnoughMood>Not enough mood: {0} / {1}</ShinAndMang_NotEnoughMood>
+  <ShinAndMang_TaughtShinLabel>Shin (心) taught</ShinAndMang_TaughtShinLabel>
+  <ShinAndMang_TaughtShinText>{0} has taught {1} the art of Shin (心). Mastering it will take a lifetime.</ShinAndMang_TaughtShinText>
   <ShinAndMang_VariantEffectsHeader>Variant effects:</ShinAndMang_VariantEffectsHeader>
   <ShinAndMang_Fate_Effect>- Damage Up: {0}/5 (+{1} damage). One per 15% missing health.\n- Attack Power Up: {2}/2 (+{3} accuracy). One per 40% missing health.\n- Against targets with lower mood: +1% damage per 2% mood difference (max +30%).</ShinAndMang_Fate_Effect>
 </LanguageData>

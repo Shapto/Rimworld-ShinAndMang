@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<InteractionDef>
+		<defName>Shin_ShareTips</defName>
+		<label>share Shin (心) tips</label>
+		<workerClass>ShinAndMang.InteractionWorker_ShinTips</workerClass>
+		<symbol>Things/Mote/SpeechSymbols/DeepTalk</symbol>
+		<logRulesInitiator>
+			<rulesStrings>
+				<li>r_logentry->[INITIATOR_nameDef] shared some tips about Shin (心) with [RECIPIENT_nameDef].</li>
+			</rulesStrings>
+		</logRulesInitiator>
+	</InteractionDef>
+</Defs>

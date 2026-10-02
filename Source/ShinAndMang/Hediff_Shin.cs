@@ -14,7 +14,7 @@ namespace ShinAndMang
         // Letting the health tracker remove it is safer than removing itself mid-tick.
         public override bool ShouldRemove => !ShinMechanics.IsInCombat(pawn);
         private const int GainIntervalTicks = 250;
-        private Mote auraMote;
+        //private Mote auraMote;
         public override void PostTick()
         {
             base.PostTick();

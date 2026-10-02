@@ -59,6 +59,9 @@
     <Compile Include="HediffProperties_ShinActivation.cs" />
     <Compile Include="Hediff_Shin.cs" />
     <Compile Include="Hediff_ShinMastery.cs" />
+    <Compile Include="InteractionWorker_ShinTips.cs" />
+    <Compile Include="ShinAndMangMod.cs" />
+    <Compile Include="ShinAndMangSettings.cs" />
     <Compile Include="ShinDefOf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShinMasteryGainExtension.cs" />

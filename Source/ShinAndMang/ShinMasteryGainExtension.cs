@@ -20,5 +20,10 @@ namespace ShinAndMang
         public float allyDownedIntensity = 1.0f;        // added intensity while a nearby ally is downed
         public float allyDownedRadius = 15f;
         public float maximumIntensity = 4f;
+        public float tipsSelectionWeight = 0.050f;   // how often it's picked; vanilla chitchat is 1, deep talk is 0.075
+        public float tipsMinimumGap = 0.05f;       // teacher must be at least this much ahead
+        public float tipsGainPerGap = 0.002f;       // gain = gap * this, before the curve
+        public float teachSelectionWeight = 0.01f;           // much rarer than tips
+        public float teachChanceAtFullMastery = 0.3f;        // success chance scales with the teacher's mastery
     }
 }

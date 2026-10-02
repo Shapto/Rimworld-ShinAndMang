@@ -11,16 +11,49 @@ namespace ShinAndMang
 {
     public class ShinMechanics
     {
+        /// <summary>
+        /// Retrieves the Shin Mastery hediff associated with the specified pawn, if present.
+        /// </summary>
+        /// <param name="pawn">The pawn from which to retrieve the Shin Mastery hediff. Can be null.</param>
+        /// <returns>The Shin Mastery hediff for the specified pawn, or null if the pawn does not have the hediff or if the pawn
+        /// is null.</returns>
         public static Hediff_ShinMastery GetMastery(Pawn pawn) => pawn?.health?.hediffSet?.GetFirstHediffOfDef(ShinDefOf.Shin_Mastery) as Hediff_ShinMastery;
 
+        /// <summary>
+        /// Retrieves the first active Hediff_Shin instance from the specified pawn, if present.
+        /// </summary>
+        /// <param name="pawn">The pawn whose health conditions are searched for an active Hediff_Shin. Can be null.</param>
+        /// <returns>The first Hediff_Shin found in the pawn's health conditions; otherwise, null if none is present or if the
+        /// pawn is null.</returns>
         public static Hediff_Shin GetActiveShin(Pawn pawn) => pawn?.health?.hediffSet?.hediffs.FirstOrDefault(hediff => hediff is Hediff_Shin) as Hediff_Shin;
 
+        /// <summary>
+        /// Determines whether the specified pawn currently has an active Shin effect.
+        /// </summary>
+        /// <param name="pawn">The pawn to check for an active Shin effect. Cannot be null.</param>
+        /// <returns>true if the pawn has an active Shin effect; otherwise, false.</returns>
         public static bool IsShinActive(Pawn pawn) => GetActiveShin(pawn) != null;
 
+        /// <summary>
+        /// Gets the mood cost required to activate the specified pawn's mastery ability.
+        /// </summary>
+        /// <param name="pawn">The pawn for which to retrieve the activation mood cost. Cannot be null.</param>
+        /// <returns>The mood cost required to activate the pawn's mastery ability. Returns 0 if the pawn does not have a mastery
+        /// or the relevant component.</returns>
         public static float ActivationMoodCost(Pawn pawn) => GetMastery(pawn)?.TryGetComp<HediffComp_ShinActivation>()?.Props.activationMoodCost ?? 0f;
 
+        /// <summary>
+        /// Determines whether the specified hediff definition represents a Shin variant.
+        /// </summary>
+        /// <param name="hediffDef">The hediff definition to evaluate. Cannot be null.</param>
+        /// <returns>true if the hediff definition's class is assignable from Hediff_Shin; otherwise, false.</returns>
         public static bool IsShinVariantDef(HediffDef hediffDef) => hediffDef.hediffClass != null && typeof(Hediff_Shin).IsAssignableFrom(hediffDef.hediffClass);
 
+        /// <summary>
+        /// Calculates the commonality value for the specified hediff definition.
+        /// </summary>
+        /// <param name="def">The hediff definition for which to determine the commonality value. Cannot be null.</param>
+        /// <returns>A floating-point value representing the commonality of the specified hediff definition.</returns>
         private static float VariantCommonality(HediffDef def) => 1f;
 
         ///Shin (心) is a combat technique.
@@ -54,6 +87,17 @@ namespace ShinAndMang
             bool attackedRecently = currentTick - pawn.LastAttackTargetTick <= recentCombatTicks;
             bool harmedRecently = currentTick - pawn.mindState.lastHarmTick <= recentCombatTicks;
             return attackedRecently || harmedRecently;
+        }
+
+        /// <summary>
+        /// Adults with a mood need who don't know Shin (心) yet.
+        /// </summary>
+        public static bool CanLearnShin(Pawn pawn)
+        {
+            if (GetMastery(pawn) != null) return false;
+            if (pawn.needs?.mood == null) return false;
+            if (!pawn.DevelopmentalStage.Adult()) return false;
+            return true;
         }
 
         /// <summary>
