@@ -12,6 +12,8 @@ namespace ShinAndMang
     public class ShinDefOf
     {
         public static HediffDef Shin_Mastery;
+
+        public static ThingDef Mote_ShinAura;
         static ShinDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(ShinDefOf));
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Verse;
 
 namespace ShinAndMang
@@ -102,6 +103,23 @@ namespace ShinAndMang
 
         public virtual float GetStatOffset(StatDef stat) => 0f;
         public virtual float GetStatFactor(StatDef stat) => 1f;
+
+        // Tooltip
+
+        /// <summary>What this variant does, shown below the base Shin (心) stats. Can include live values.</summary>
+        public virtual string EffectDescription => null;
+
+        private static readonly Color ShinGold = new Color(1f, 0.82f, 0.35f);
+
+        public sealed override string CompTipStringExtra
+        {
+            get
+            {
+                string effectDescription = EffectDescription;
+                if (effectDescription.NullOrEmpty()) return null;
+                return "\n" + "ShinAndMang_VariantEffectsHeader".Translate().Resolve().Colorize(ShinGold) + "\n" + effectDescription;
+            }
+        }
 
         // Helpers for subclasses
 

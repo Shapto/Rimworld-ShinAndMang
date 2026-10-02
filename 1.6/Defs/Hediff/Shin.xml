@@ -58,6 +58,11 @@
 	<HediffDef ParentName="ShinBase">
 		<defName>Shin_Fate</defName>
 		<label>Shin (心) - Fate</label>
+		<comps>
+			<li Class="ShinAndMang.HediffCompProperties_ShinVariant">
+				<compClass>ShinAndMang.ShinVariant_Fate</compClass>
+			</li>
+		</comps>
 	</HediffDef>
 
 </Defs>

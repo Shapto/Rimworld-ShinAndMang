@@ -9,4 +9,6 @@
   <ShinAndMang_NotInCombat>Must be drafted.</ShinAndMang_NotInCombat>
   <ShinAndMang_NoMood>Has no mood.</ShinAndMang_NoMood>
   <ShinAndMang_NotEnoughMood>Not enough mood: {0} / {1}</ShinAndMang_NotEnoughMood>
+  <ShinAndMang_VariantEffectsHeader>Variant effects:</ShinAndMang_VariantEffectsHeader>
+  <ShinAndMang_Fate_Effect>- Damage Up: {0}/5 (+{1} damage). One per 15% missing health.\n- Attack Power Up: {2}/2 (+{3} accuracy). One per 40% missing health.\n- Against targets with lower mood: +1% damage per 2% mood difference (max +30%).</ShinAndMang_Fate_Effect>
 </LanguageData>

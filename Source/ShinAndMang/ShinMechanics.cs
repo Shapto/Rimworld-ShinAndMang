@@ -18,6 +18,8 @@ namespace ShinAndMang
 
         public static float ActivationMoodCost(Pawn pawn) => GetMastery(pawn)?.TryGetComp<HediffComp_ShinActivation>()?.Props.activationMoodCost ?? 0f;
 
+        public static bool IsShinVariantDef(HediffDef hediffDef) => hediffDef.hediffClass != null && typeof(Hediff_Shin).IsAssignableFrom(hediffDef.hediffClass);
+
         private static float VariantCommonality(HediffDef def) => 1f;
 
         ///Shin (心) is a combat technique.
@@ -68,8 +70,7 @@ namespace ShinAndMang
 
         public static HediffDef RollVariant()
         {
-            var variantPool = DefDatabase<HediffDef>.AllDefs
-                .Where(d => d.hediffClass != null && typeof(Hediff_Shin).IsAssignableFrom(d.hediffClass));
+            var variantPool = DefDatabase<HediffDef>.AllDefs.Where(IsShinVariantDef);
 
             return variantPool.TryRandomElementByWeight(VariantCommonality, out HediffDef rolledVariant) ? rolledVariant : null;
         }

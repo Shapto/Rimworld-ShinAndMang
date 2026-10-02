@@ -100,14 +100,13 @@ namespace ShinAndMang
         }
         static ShinStageInterpolator()
         {
-            var variantDefs = DefDatabase<HediffDef>.AllDefs
-                .Where(hediffDef => hediffDef.hediffClass != null && typeof(Hediff_Shin).IsAssignableFrom(hediffDef.hediffClass));
+            var variantDefs = DefDatabase<HediffDef>.AllDefs.Where(ShinMechanics.IsShinVariantDef);
 
             foreach (HediffDef variantDef in variantDefs)
             {
                 if (variantDef.stages == null || variantDef.stages.Count < 2)
                 {
-                    Log.Error($"[Shin and Mang] {variantDef.defName} needs at least two stages (novice and Sovereign).");
+                    Log.Error($"[Shin and Mang] {variantDef.defName} needs at least two stages (Novice and Sovereign).");
                     continue;
                 }
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<ThoughtDef>
+		<defName>Shin_Suppression</defName>
+		<workerClass>ShinAndMang.ThoughtWorker_ShinSuppression</workerClass>
+		<thoughtClass>ShinAndMang.Thought_ShinSuppression</thoughtClass>
+		<stages>
+			<li>
+				<label>Shin (心)</label>
+				<description>I deaden my breath, and clear my mind. Rummaging through this bag of memories, I carefully fumble around the recollections and pick the heaviest and densest ones to fill my emptied head.</description>
+				<baseMoodEffect>0</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
+</Defs>

@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graphic_FlickerSized.cs" />
     <Compile Include="HediffProperties_ShinActivation.cs" />
     <Compile Include="Hediff_Shin.cs" />
     <Compile Include="Hediff_ShinMastery.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="ShinStageInterpolator.cs" />
     <Compile Include="ShinVariant.cs" />
     <Compile Include="ShinVariantHooks.cs" />
+    <Compile Include="Fate.cs" />
+    <Compile Include="StatPart_ShinVariant.cs" />
+    <Compile Include="Thought_ShinSuppression.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

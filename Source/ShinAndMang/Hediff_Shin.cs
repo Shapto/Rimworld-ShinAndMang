@@ -14,6 +14,20 @@ namespace ShinAndMang
         // Letting the health tracker remove it is safer than removing itself mid-tick.
         public override bool ShouldRemove => !ShinMechanics.IsInCombat(pawn);
 
+        private Mote auraMote;
+        public override void PostTick()
+        {
+            base.PostTick();
+            if (!pawn.Spawned) return;
+
+            if (auraMote == null || auraMote.Destroyed)
+            {
+                auraMote = MoteMaker.MakeAttachedOverlay(pawn, ShinDefOf.Mote_ShinAura, Vector3.zero);
+            }
+
+            auraMote.Maintain();
+        }
+
         public override void PostRemoved()
         {
             base.PostRemoved();
