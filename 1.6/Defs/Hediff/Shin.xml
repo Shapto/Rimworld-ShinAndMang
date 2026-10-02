@@ -125,4 +125,34 @@
 		</comps>
 	</HediffDef>
 
+	<HediffDef ParentName="ShinBase">
+		<defName>Shin_Psychoment</defName>
+		<label>Shin (心) - Psychoment</label>
+		<comps>
+			<li Class="ShinAndMang.HediffCompProperties_ShinVariant">
+				<compClass>ShinAndMang.ShinVariant_Psychoment</compClass>
+			</li>
+		</comps>
+	</HediffDef>
+
+	<HediffDef ParentName="ShinBase">
+		<defName>Shin_Sidekick</defName>
+		<label>Shin (心) - Sidekick</label>
+		<comps>
+			<li Class="ShinAndMang.HediffCompProperties_ShinVariant">
+				<compClass>ShinAndMang.ShinVariant_Sidekick</compClass>
+			</li>
+		</comps>
+	</HediffDef>
+
+	<HediffDef ParentName="ShinBase">
+		<defName>Shin_Hornet</defName>
+		<label>Shin (心) - Hornet</label>
+		<comps>
+			<li Class="ShinAndMang.HediffCompProperties_ShinVariant">
+				<compClass>ShinAndMang.ShinVariant_Hornet</compClass>
+			</li>
+		</comps>
+	</HediffDef>
+
 </Defs>
