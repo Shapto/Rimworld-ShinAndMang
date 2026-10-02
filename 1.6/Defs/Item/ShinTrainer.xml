@@ -13,9 +13,15 @@
       <li>ItemsMisc</li>
     </thingCategories>
     <statBases>
-      <MarketValue>1500</MarketValue>
+      <MarketValue>2600</MarketValue>
       <Mass>0.3</Mass>
     </statBases>
+	 <tradeTags>
+		 <li>PsylinkNeuroformer</li>
+	 </tradeTags>
+	  <thingSetMakerTags>
+		  <li>RewardStandardLowFreq</li>
+	  </thingSetMakerTags>
     <comps>
       <li Class="CompProperties_Usable">
         <useJob>UseItem</useJob>

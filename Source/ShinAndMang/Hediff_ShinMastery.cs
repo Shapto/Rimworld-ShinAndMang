@@ -19,6 +19,8 @@ namespace ShinAndMang
         //prevents removal of mastery at 0% as its supposed to start at 0
         public override bool ShouldRemove => false;
 
+        private const int MeditationCheckIntervalTicks = 250;
+
         // "Shin (心) Sovereign (100%)"
         public override string LabelInBrackets
         {
@@ -27,6 +29,20 @@ namespace ShinAndMang
                 string stageLabel = base.LabelInBrackets;
                 string masteryPercentage = Severity.ToStringPercent();
                 return stageLabel.NullOrEmpty() ? masteryPercentage : stageLabel + ", " + masteryPercentage;
+            }
+        }
+
+
+        public override void PostTick()
+        {
+            base.PostTick();
+            if (!pawn.IsHashIntervalTick(MeditationCheckIntervalTicks)) return;
+            if (!ModsConfig.RoyaltyActive || !pawn.Spawned) return;
+            bool isMeditating = pawn.CurJobDef == JobDefOf.Meditate;
+            bool isWalking = pawn.pather.MovingNow;
+            if (isMeditating && !isWalking)
+            {
+                ShinMechanics.GainMeditationMastery(pawn, MeditationCheckIntervalTicks);
             }
         }
 

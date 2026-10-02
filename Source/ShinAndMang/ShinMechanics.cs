@@ -79,6 +79,16 @@ namespace ShinAndMang
         }
 
         /// <summary>
+        /// Small mastery gain from meditation.
+        /// </summary>
+        public static void GainMeditationMastery(Pawn pawn, int intervalTicks)
+        {
+            ShinMasteryGainExtension gainSettings = ShinDefOf.Shin_Mastery.GetModExtension<ShinMasteryGainExtension>();
+            if (gainSettings == null) return;
+            GainMastery(pawn, gainSettings.meditationGainPerHour * (intervalTicks / 2500f));
+        }
+
+        /// <summary>
         /// True if the pawn attacked or was hit recently, not just standing around drafted.
         /// </summary>
         public static bool IsActivelyFighting(Pawn pawn, int recentCombatTicks)

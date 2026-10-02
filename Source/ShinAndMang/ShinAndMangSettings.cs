@@ -20,7 +20,6 @@ namespace ShinAndMang
             base.ExposeData();
             Scribe_Values.Look(ref masteryGainMultiplier, "masteryGainMultiplier", 1f);
             Scribe_Values.Look(ref allowTeachingThroughConversation, "allowTeachingThroughConversation", true);
-            // TODO: the same for allowTeachingThroughConversation, default true
         }
     }
 }

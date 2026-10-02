@@ -25,5 +25,6 @@ namespace ShinAndMang
         public float tipsGainPerGap = 0.002f;       // gain = gap * this, before the curve
         public float teachSelectionWeight = 0.01f;           // much rarer than tips
         public float teachChanceAtFullMastery = 0.3f;        // success chance scales with the teacher's mastery
+        public float meditationGainPerHour = 0.0005f;   //0.05% per hour of meditation
     }
 }
