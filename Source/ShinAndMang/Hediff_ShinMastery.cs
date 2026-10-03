@@ -21,6 +21,11 @@ namespace ShinAndMang
 
         private const int CheckIntervalTicks = 250;
 
+        /// <summary>
+        /// How many Mang (望) rings the player wants formed: used by Form Mang (望) and by automatic formation.
+        /// </summary>
+        public int mangTargetRings = 7;
+
         // "Shin (心) Sovereign (100%)"
         public override string LabelInBrackets
         {

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<HediffDef>
+		<defName>Mang_Rings</defName>
+		<label>Mang (望)</label>
+		<description>Rings of Mang (望), formed from a terrible memory and waiting to be released into the next attack.</description>
+		<hediffClass>ShinAndMang.Hediff_Mang</hediffClass>
+		<defaultLabelColor>(1, 0.82, 0.35)</defaultLabelColor>
+		<isBad>false</isBad>
+		<everCurableByItem>false</everCurableByItem>
+		<initialSeverity>1</initialSeverity>
+		<maxSeverity>7</maxSeverity>
+		<modExtensions>
+			<li Class="ShinAndMang.MangSettings">
+				<baseCostByMastery>
+					<points>
+						<li>(0.20, 0.20)</li>
+						<li>(0.45, 0.08)</li>
+						<li>(0.72, 0.03)</li>
+						<li>(1.00, 0.005)</li>
+					</points>
+				</baseCostByMastery>
+			</li>
+		</modExtensions>
+	</HediffDef>
+
+</Defs>

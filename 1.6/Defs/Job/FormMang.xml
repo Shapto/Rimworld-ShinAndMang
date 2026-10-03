@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<JobDef>
+		<defName>FormMang</defName>
+		<driverClass>ShinAndMang.JobDriver_FormMang</driverClass>
+		<reportString>forming Mang (望).</reportString>
+		<casualInterruptible>false</casualInterruptible>
+		<suspendable>false</suspendable>
+	</JobDef>
+
+</Defs>

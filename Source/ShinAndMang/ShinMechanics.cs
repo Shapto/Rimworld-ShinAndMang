@@ -110,6 +110,7 @@ namespace ShinAndMang
             if (GetMastery(pawn) != null) return false;
             if (pawn.needs?.mood == null) return false;
             if (!pawn.DevelopmentalStage.Adult()) return false;
+            if (pawn.WorkTagIsDisabled(WorkTags.Violent)) return false;
             return true;
         }
 
@@ -165,6 +166,7 @@ namespace ShinAndMang
             if (mastery.Variant == null) { disabledReason = "ShinAndMang_NoVariant".Translate(); return false; }
             if (IsShinActive(pawn)) { disabledReason = "ShinAndMang_AlreadyActive".Translate(); return false; }
             if (!IsInCombat(pawn)) { disabledReason = "ShinAndMang_NotInCombat".Translate(); return false; }
+            if (pawn.WorkTagIsDisabled(WorkTags.Violent)) { disabledReason = "ShinAndMang_IncapableOfViolence".Translate(); return false; }
 
             Need_Mood mood = pawn.needs?.mood;
             if (mood == null) { disabledReason = "ShinAndMang_NoMood".Translate(); return false; }

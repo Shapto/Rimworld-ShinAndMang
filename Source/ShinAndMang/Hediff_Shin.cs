@@ -14,17 +14,22 @@ namespace ShinAndMang
         // Letting the health tracker remove it is safer than removing itself mid-tick.
         public override bool ShouldRemove => !ShinMechanics.IsInCombat(pawn);
         private const int GainIntervalTicks = 250;
-        //private Mote auraMote;
+        private const int SparkIntervalTicks = 30;
+        private Mote auraMote;
         public override void PostTick()
         {
             base.PostTick();
+
+            if (pawn.Spawned)
+            {
+                if (auraMote == null || auraMote.Destroyed) auraMote = MoteMaker.MakeAttachedOverlay(pawn, ShinDefOf.Mote_ShinAura, Vector3.zero);
+                auraMote.Maintain();
+
+                if (pawn.IsHashIntervalTick(SparkIntervalTicks)) ShinVisuals.ThrowSpark(pawn);
+            }
+
             if (!pawn.Spawned) return;
             if (!pawn.IsHashIntervalTick(GainIntervalTicks)) return;
-            //if (auraMote == null || auraMote.Destroyed)
-            //{
-            //    auraMote = MoteMaker.MakeAttachedOverlay(pawn, ShinDefOf.Mote_ShinAura, Vector3.zero);
-            //}
-            //auraMote.Maintain();
 
             ShinMasteryGainExtension gainSettings = ShinDefOf.Shin_Mastery.GetModExtension<ShinMasteryGainExtension>();
             if (gainSettings != null && ShinMechanics.IsActivelyFighting(pawn, gainSettings.recentCombatTicks))
@@ -33,7 +38,6 @@ namespace ShinAndMang
                 ShinMechanics.GainMastery(pawn, gain);
             }
         }
-
 
         public override void PostRemoved()
         {

@@ -14,6 +14,12 @@ namespace ShinAndMang
         public static HediffDef Shin_Mastery;
 
         public static ThingDef Mote_ShinAura;
+
+        public static FleckDef Fleck_ShinSpark;
+
+        public static HediffDef Mang_Rings;
+
+        public static JobDef FormMang;
         static ShinDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(ShinDefOf));
     }
 }

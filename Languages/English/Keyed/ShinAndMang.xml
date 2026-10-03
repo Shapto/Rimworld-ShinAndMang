@@ -10,6 +10,7 @@
   <ShinAndMang_NotInCombat>Must be drafted.</ShinAndMang_NotInCombat>
   <ShinAndMang_NoMood>Has no mood.</ShinAndMang_NoMood>
   <ShinAndMang_NotEnoughMood>Not enough mood: {0} / {1}</ShinAndMang_NotEnoughMood>
+  <ShinAndMang_IncapableOfViolence>Incapable of violence.</ShinAndMang_IncapableOfViolence>
   <ShinAndMang_TaughtShinLabel>Shin (心) taught</ShinAndMang_TaughtShinLabel>
   <ShinAndMang_TaughtShinText>{0} has taught {1} the art of Shin (心). Mastering it will take a lifetime.</ShinAndMang_TaughtShinText>
   <ShinAndMang_LearnedShinLabel>Shin (心) learned</ShinAndMang_LearnedShinLabel>
@@ -41,4 +42,20 @@
   <ShinAndMang_Sidekick_Targeting>{0}: +{1} damage</ShinAndMang_Sidekick_Targeting>
   <ShinAndMang_Hornet_Effect>- Accuracy and melee hit chance +{0}. Melee dodge chance +{1}.\n- Damage dealt: currently +{2}. Increases with mood above 50%, up to +{3} at 95% mood.\n- Hitting whoever last hurt the user (within 10 seconds): mood +{4}.</ShinAndMang_Hornet_Effect>
   <ShinAndMang_Hornet_Targeting>{0}: +{1} damage</ShinAndMang_Hornet_Targeting>
+  <ShinAndMang_SettingRestartRequired>Restart required for the settings below:</ShinAndMang_SettingRestartRequired>
+  <ShinAndMang_SettingNoviceSharpArmor>Shin (心) sharp armor at novice</ShinAndMang_SettingNoviceSharpArmor>
+  <ShinAndMang_SettingSovereignSharpArmor>Shin (心) sharp armor at Sovereign</ShinAndMang_SettingSovereignSharpArmor>
+  <ShinAndMang_SettingNoviceBluntArmor>Shin (心) blunt armor at novice</ShinAndMang_SettingNoviceBluntArmor>
+  <ShinAndMang_SettingSovereignBluntArmor>Shin (心) blunt armor at Sovereign</ShinAndMang_SettingSovereignBluntArmor>
+  <ShinAndMang_SettingNoviceHeatArmor>Shin (心) heat armor at novice</ShinAndMang_SettingNoviceHeatArmor>
+  <ShinAndMang_SettingSovereignHeatArmor>Shin (心) heat armor at Sovereign</ShinAndMang_SettingSovereignHeatArmor>
+  <!-- Mang (望) -->
+  <ShinAndMang_Incapacitated>Incapacitated.</ShinAndMang_Incapacitated>
+  <ShinAndMang_NoRingsUnlocked>Mastery too low to form Mang (望).</ShinAndMang_NoRingsUnlocked>
+  <ShinAndMang_RingsFull>Already holding the maximum of {0} rings.</ShinAndMang_RingsFull>
+  <ShinAndMang_RingFizzled>Mang (望) fizzled</ShinAndMang_RingFizzled>
+  <ShinAndMang_MangTargetLabel>Mang (望): {0} rings (safe: {1})</ShinAndMang_MangTargetLabel>
+  <ShinAndMang_MangTargetDescription>How many Mang (望) rings to form, used by Form Mang (望) and when forming rings before an attack. Left-click to raise, right-click to lower.</ShinAndMang_MangTargetDescription>
+  <ShinAndMang_FormMangLabel>Form Mang (望)</ShinAndMang_FormMangLabel>
+  <ShinAndMang_FormMangDescription>Stand still and form Mang (望) rings one after another, up to {0} rings. Each ring costs mood: forming up to the target costs {1}, more if a ring fizzles. Rings beyond the safe amount can push the user into a mental break. Being hurt interrupts the formation, and formed rings fade if not used.</ShinAndMang_FormMangDescription>
 </LanguageData>

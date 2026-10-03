@@ -7,13 +7,13 @@
 		<altitudeLayer>MoteLow</altitudeLayer>
 		<mote>
 			<needsMaintenance>true</needsMaintenance>
-			<fadeInTime>0.2</fadeInTime>
+			<fadeInTime>0.3</fadeInTime>
 			<solidTime>999999</solidTime>
-			<fadeOutTime>0.3</fadeOutTime>
+			<fadeOutTime>0.4</fadeOutTime>
 		</mote>
 		<graphicData>
-			<texPath>VFX/ShinAura</texPath>
-			<graphicClass>ShinAndMang.Graphic_FlickerSized</graphicClass>
+			<texPath>VFX/ShinGlow</texPath>
+			<graphicClass>Graphic_Mote</graphicClass>
 			<shaderType>MoteGlow</shaderType>
 			<drawSize>2.0</drawSize>
 		</graphicData>

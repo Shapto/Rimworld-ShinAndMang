@@ -16,6 +16,12 @@ namespace ShinAndMang
         public bool allowTeachingThroughConversation = true;
         public float shinSpawnChance = 0.01f; // 1% of eligible pawns
         public bool everybodyHasShin = false;
+        public float noviceSharpArmor = 0.30f;
+        public float sovereignSharpArmor = 1.20f;
+        public float noviceBluntArmor = 0.15f;
+        public float sovereignBluntArmor = 0.80f;
+        public float noviceHeatArmor = 0.05f;
+        public float sovereignHeatArmor = 0.30f;
         public override void ExposeData()
         {
             base.ExposeData();
@@ -23,6 +29,12 @@ namespace ShinAndMang
             Scribe_Values.Look(ref allowTeachingThroughConversation, "allowTeachingThroughConversation", true);
             Scribe_Values.Look(ref shinSpawnChance, "shinSpawnChance", 0.01f);
             Scribe_Values.Look(ref everybodyHasShin, "everybodyHasShin", false);
+            Scribe_Values.Look(ref noviceSharpArmor, "noviceSharpArmor", 0.30f);
+            Scribe_Values.Look(ref sovereignSharpArmor, "sovereignSharpArmor", 1.20f);
+            Scribe_Values.Look(ref noviceBluntArmor, "noviceBluntArmor", 0.15f);
+            Scribe_Values.Look(ref sovereignBluntArmor, "sovereignBluntArmor", 0.80f);
+            Scribe_Values.Look(ref noviceHeatArmor, "noviceHeatArmor", 0.05f);
+            Scribe_Values.Look(ref sovereignHeatArmor, "sovereignHeatArmor", 0.30f);
         }
     }
 }

@@ -63,17 +63,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command_MangTarget.cs" />
     <Compile Include="CompUseEffect_GainShin.cs" />
     <Compile Include="Dihui Star.cs" />
     <Compile Include="Disgrace.cs" />
     <Compile Include="Graphic_FlickerSized.cs" />
     <Compile Include="HediffProperties_ShinActivation.cs" />
+    <Compile Include="Hediff_Mang.cs" />
     <Compile Include="Hediff_Shin.cs" />
     <Compile Include="Hediff_ShinMastery.cs" />
     <Compile Include="Hornet.cs" />
     <Compile Include="InteractionWorker_ShinTips.cs" />
+    <Compile Include="JobDriver_FormMang.cs" />
+    <Compile Include="MangMechanics.cs" />
+    <Compile Include="MangSettings.cs" />
     <Compile Include="MapComponent_ShinTargetingReadout.cs" />
     <Compile Include="Patch_PawnGenerator_GeneratePawn.cs" />
+    <Compile Include="Patch_Pawn_Kill.cs" />
+    <Compile Include="Patch_VerbMeleeAttack_TryCastShot.cs" />
     <Compile Include="Procuration.cs" />
     <Compile Include="Psychoment.cs" />
     <Compile Include="Radiance.cs" />
@@ -88,6 +95,7 @@
     <Compile Include="ShinVariant.cs" />
     <Compile Include="ShinVariantHooks.cs" />
     <Compile Include="Fate.cs" />
+    <Compile Include="ShinVisuals.cs" />
     <Compile Include="Sidekick.cs" />
     <Compile Include="StatPart_ShinVariant.cs" />
     <Compile Include="Thought_ShinSuppression.cs" />

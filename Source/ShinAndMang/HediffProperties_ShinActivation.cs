@@ -1,11 +1,12 @@
-﻿using System;
+﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Verse;
-using RimWorld;
 using UnityEngine;
+using Verse;
+using Verse.AI;
 
 namespace ShinAndMang
 {
@@ -53,6 +54,32 @@ namespace ShinAndMang
             if (!ShinMechanics.IsShinActive(pawn) && !ShinMechanics.CanActivateShin(pawn, out string disabledReason))
                 shinToggle.Disable(disabledReason);
 
+            Hediff_ShinMastery mastery = parent as Hediff_ShinMastery;
+            int maximumRings = MangMechanics.MaximumRings(pawn);
+
+            if (mastery != null && maximumRings >= 1)
+            {
+                // Ring setting: shows the current target, each click raises it, wrapping back to 1 after the maximum.
+                int shownTarget = Mathf.Min(mastery.mangTargetRings, maximumRings);
+                yield return new Command_MangTarget {
+                    mastery = mastery,
+                    maximumRings = maximumRings,
+                    defaultLabel = "ShinAndMang_MangTargetLabel".Translate(shownTarget, MangMechanics.SafeRingCount(pawn)),
+                    defaultDesc = "ShinAndMang_MangTargetDescription".Translate(),
+                    icon = Icon };
+
+                // Form Mang (望): starts the preparation job.
+                var formMang = new Command_Action
+                {
+                    defaultLabel = "ShinAndMang_FormMangLabel".Translate(),
+                    defaultDesc = "ShinAndMang_FormMangDescription".Translate(),
+                    icon = Icon,
+                    action = () => pawn.jobs.TryTakeOrderedJob(JobMaker.MakeJob(ShinDefOf.FormMang), JobTag.Misc)
+                };
+                if (!MangMechanics.CanFormRing(pawn, out string formMangReason)) formMang.Disable(formMangReason);
+                yield return formMang;
+            }
+
             yield return shinToggle;
 
             if (Prefs.DevMode)
@@ -67,12 +94,8 @@ namespace ShinAndMang
                 };
                 yield return new Command_Action
                 {
-                    defaultLabel = "DEV: Shin Mastery -10%",
-                    action = () =>
-                    {
-                        parent.Severity = Mathf.Min(1f, parent.Severity + 0.1f);
-                        ShinMechanics.NotifyMasteryChanged(parent.pawn);
-                    }
+                    defaultLabel = "DEV: Form Mang ring",
+                    action = () => MangMechanics.TryFormRing(parent.pawn)
                 };
             }
         }

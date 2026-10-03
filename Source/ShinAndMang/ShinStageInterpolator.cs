@@ -112,6 +112,7 @@ namespace ShinAndMang
 
                 HediffStage noviceStage = variantDef.stages[0];
                 HediffStage sovereignStage = variantDef.stages[1];
+                ApplyArmorSettings(noviceStage, sovereignStage);
                 List<HediffStage> variantOwnStages = variantDef.stages.Skip(2).ToList();
 
                 var generatedStages = new List<HediffStage>(GeneratedStageCount);
@@ -126,6 +127,29 @@ namespace ShinAndMang
 
                 variantDef.stages = generatedStages;
             }
+        }
+
+        /// <summary>
+        /// Overrides the endpoint armor values with the player's mod settings.
+        /// </summary>
+        private static void ApplyArmorSettings(HediffStage noviceStage, HediffStage sovereignStage)
+        {
+            ShinAndMangSettings settings = ShinAndMangMod.Settings;
+            SetStatOffset(noviceStage, StatDefOf.ArmorRating_Sharp, settings.noviceSharpArmor);
+            SetStatOffset(sovereignStage, StatDefOf.ArmorRating_Sharp, settings.sovereignSharpArmor);
+            SetStatOffset(noviceStage, StatDefOf.ArmorRating_Blunt, settings.noviceBluntArmor);
+            SetStatOffset(sovereignStage, StatDefOf.ArmorRating_Blunt, settings.sovereignBluntArmor);
+            SetStatOffset(noviceStage, StatDefOf.ArmorRating_Heat, settings.noviceHeatArmor);
+            SetStatOffset(sovereignStage, StatDefOf.ArmorRating_Heat, settings.sovereignHeatArmor);
+        }
+
+        private static void SetStatOffset(HediffStage stage, StatDef stat, float value)
+        {
+            if (stage.statOffsets == null) stage.statOffsets = new List<StatModifier>();
+
+            StatModifier existingModifier = stage.statOffsets.FirstOrDefault(modifier => modifier.stat == stat);
+            if (existingModifier != null) existingModifier.value = value;
+            else stage.statOffsets.Add(new StatModifier { stat = stat, value = value });
         }
     }
 }

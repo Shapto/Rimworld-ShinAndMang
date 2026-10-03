@@ -60,6 +60,12 @@ namespace ShinAndMang
             {
                 if (ShinVariantHooks.IsApplyingExtraDamage) return;
 
+                // Mang (望): an attack carrying rings deals multiplied damage.
+                if (dinfo.Instigator is Pawn strikingPawn && MangMechanics.TryGetActiveStrike(strikingPawn, out int strikeRings))
+                {
+                    dinfo.SetAmount(dinfo.Amount * MangMechanics.DamageMultiplier(strikeRings));
+                }
+
                 // Attacker's variant first, then the victim's, so a defensive variant reduces the already-boosted hit.
                 if (dinfo.Instigator is Pawn attacker)
                 {
