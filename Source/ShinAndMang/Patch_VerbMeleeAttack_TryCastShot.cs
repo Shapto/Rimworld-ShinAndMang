@@ -20,17 +20,25 @@ namespace ShinAndMang
             __state = false;
             Pawn attacker = __instance.CasterPawn;
             if (attacker == null) return;
+
+            // Moves that can't harm (kicking dust, shoving) don't use the rings.
             DamageDef damageDef = __instance.GetDamageDef();
             if (damageDef == null || !damageDef.harmsHealth) return;
-            int ringCount = MangMechanics.ConsumeRings(attacker);
+
+            int ringCount = MangMechanics.CurrentRings(attacker);
             if (ringCount == 0) return;
+
             MangMechanics.BeginStrike(attacker, ringCount);
             __state = true;
         }
 
         public static void Postfix(Verb_MeleeAttack __instance, bool __state)
         {
-            if (__state) MangMechanics.EndStrike(__instance.CasterPawn);
+            if (!__state) return;
+
+            // Only a strike that actually hit spends the rings; a miss or a dodge keeps them.
+            Pawn attacker = __instance.CasterPawn;
+            if (MangMechanics.EndStrike(attacker)) MangMechanics.ConsumeRings(attacker);
         }
     }
 }

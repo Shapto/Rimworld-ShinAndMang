@@ -12,7 +12,7 @@
             <clipPath>Shin/shin_add</clipPath>
           </li>
         </grains>
-        <volumeRange>85~90</volumeRange>
+        <volumeRange>40~45</volumeRange>
       </li>
     </subSounds>
   </SoundDef>
@@ -30,7 +30,7 @@
             <clipPath>Shin/shin_loop</clipPath>
           </li>
         </grains>
-        <volumeRange>40~45</volumeRange>
+        <volumeRange>18~22</volumeRange>
         <sustainLoop>true</sustainLoop>
         <sustainAttack>0.2</sustainAttack>
         <sustainRelease>0.15</sustainRelease>

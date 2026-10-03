@@ -64,6 +64,7 @@ namespace ShinAndMang
                 if (dinfo.Instigator is Pawn strikingPawn && MangMechanics.TryGetActiveStrike(strikingPawn, out int strikeRings))
                 {
                     dinfo.SetAmount(dinfo.Amount * MangMechanics.DamageMultiplier(strikeRings));
+                    MangMechanics.MarkStrikeLanded(strikingPawn);
                 }
 
                 // Attacker's variant first, then the victim's, so a defensive variant reduces the already-boosted hit.

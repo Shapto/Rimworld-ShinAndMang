@@ -34,6 +34,12 @@ namespace ShinAndMang
         private const float FlareStartScale = 0.9f;   // starts slightly inside the ring's line, so the flames grow out of it
         private const float FlareEndScale = 1.8f;          // how far the flames swell outward
 
+        // Sparks
+        private const int SparkIntervalTicks = 20;             // about 3 sparks per second, per ring
+        private const float RingEllipseAspect = 32f / 94f;      // the ring's width relative to its height, from the texture
+        private const float SparkMinimumSpeed = 0.5f;
+        private const float SparkMaximumSpeed = 1.0f;
+
         private enum RingMode { Weapon, Torso }
 
         private struct RingAnchor
@@ -218,6 +224,42 @@ namespace ShinAndMang
                 if (!pawn.Spawned || pawn.Map != map || MangMechanics.CurrentRings(pawn) == 0) pawnsToForget.Add(pawn);
             }
             foreach (Pawn pawn in pawnsToForget) statesByPawn.Remove(pawn);
+        }
+
+        // Sparks
+
+        public override void MapComponentTick()
+        {
+            int currentTick = Find.TickManager.TicksGame;
+            foreach (KeyValuePair<Pawn, PawnRingState> pawnAndState in statesByPawn)
+            {
+                Pawn pawn = pawnAndState.Key;
+                if (!pawn.Spawned || pawn.Map != map) continue;
+
+                List<RingAnchor> shownRings = pawnAndState.Value.lastShown;
+                for (int ringIndex = 0; ringIndex < shownRings.Count; ringIndex++)
+                {
+                    // Offset per pawn and per ring, so rings don't all spark on the same tick.
+                    if ((currentTick + pawn.thingIDNumber + ringIndex * 7) % SparkIntervalTicks != 0) continue;
+                    ThrowRingSpark(shownRings[ringIndex]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Throws one spark from a random point on the ring's outline, flying outward from its center.
+        /// </summary>
+        private void ThrowRingSpark(RingAnchor ring)
+        {
+            float aroundRing = Rand.Range(0f, Mathf.PI * 2f);
+            float longRadius = ring.diameter / 2f;
+
+            // A point on the ellipse (thin across, long along), then turned to the ring's angle.
+            Vector3 pointOnRing = new Vector3(Mathf.Cos(aroundRing) * longRadius * RingEllipseAspect, 0f, Mathf.Sin(aroundRing) * longRadius);
+            Vector3 offsetFromCenter = Quaternion.AngleAxis(ring.angle, Vector3.up) * pointOnRing;
+
+            float outwardAngle = Mathf.Atan2(offsetFromCenter.x, offsetFromCenter.z) * Mathf.Rad2Deg;
+            ShinVisuals.ThrowSparkAt(ShinDefOf.Fleck_MangSpark, map, ring.position + offsetFromCenter, outwardAngle, Rand.Range(SparkMinimumSpeed, SparkMaximumSpeed));
         }
     }
 }

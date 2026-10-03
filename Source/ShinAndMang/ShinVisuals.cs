@@ -27,5 +27,16 @@ namespace ShinAndMang
             sparkData.velocitySpeed = Rand.Range(0.4f, 0.9f);
             pawn.Map.flecks.CreateFleck(sparkData);
         }
+
+        /// <summary>
+        /// One spark of the given kind at a given spot, flying in a given direction (clockwise angle, 0 = up the screen).
+        /// </summary>
+        public static void ThrowSparkAt(FleckDef sparkDef, Map map, Vector3 position, float velocityAngle, float speed)
+        {
+            FleckCreationData sparkData = FleckMaker.GetDataStatic(position, map, sparkDef, Rand.Range(0.6f, 1f));
+            sparkData.velocityAngle = velocityAngle;
+            sparkData.velocitySpeed = speed;
+            map.flecks.CreateFleck(sparkData);
+        }
     }
 }

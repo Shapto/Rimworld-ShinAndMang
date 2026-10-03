@@ -21,7 +21,6 @@ namespace ShinAndMang
         public override void PostTick()
         {
             base.PostTick();
-            ShinDefOf.Shin_Add.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
             if (pawn.Spawned)
             {
                 if (auraMote == null || auraMote.Destroyed) auraMote = MoteMaker.MakeAttachedOverlay(pawn, ShinDefOf.Mote_ShinAura, Vector3.zero);
@@ -40,6 +39,12 @@ namespace ShinAndMang
                 float gain = gainSettings.combatGainPerHour * (GainIntervalTicks / 2500f) * ShinMechanics.CombatIntensity(pawn, gainSettings);
                 ShinMechanics.GainMastery(pawn, gain);
             }
+        }
+
+        public override void PostAdd(DamageInfo? dinfo)
+        {
+            base.PostAdd(dinfo);
+            if (pawn.Spawned) ShinDefOf.Shin_Add.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
         }
 
         public override void PostRemoved()

@@ -18,4 +18,21 @@
 		</graphicData>
 	</FleckDef>
 
+	<!-- Mang (望) ring spark -->
+	<FleckDef>
+	<defName>Fleck_MangSpark</defName>
+	<fleckSystemClass>FleckSystemThrown</fleckSystemClass>
+	<altitudeLayer>MoteOverhead</altitudeLayer>
+	<fadeInTime>0.03</fadeInTime>
+	<solidTime>0.12</solidTime>
+	<fadeOutTime>0.3</fadeOutTime>
+	<growthRate>-0.4</growthRate>
+	<graphicData>
+		<texPath>VFX/ShinSpark</texPath>
+		<graphicClass>Graphic_Fleck</graphicClass>
+		<shaderType>MoteGlow</shaderType>
+		<drawSize>0.18</drawSize>
+	</graphicData>
+	</FleckDef>
+
 </Defs>

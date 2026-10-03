@@ -25,7 +25,13 @@ namespace ShinAndMang
         /// </summary>
         public static int MaximumRings(Pawn pawn) => ShinMechanics.GetMastery(pawn)?.MasteryTier ?? 0;
 
-        private static readonly Dictionary<Pawn, int> activeStrikeRings = new Dictionary<Pawn, int>();
+        private class ActiveStrike
+        {
+            public int ringCount;
+            public bool landed;
+        }
+
+        private static readonly Dictionary<Pawn, ActiveStrike> activeStrikes = new Dictionary<Pawn, ActiveStrike>();
 
         /// <summary>
         /// Mood cost of forming ring number "ringNumber" (1 to 7).
@@ -185,8 +191,31 @@ namespace ShinAndMang
             return Mathf.Pow(multiplierPerRing, ringCount);
         }
 
-        public static void BeginStrike(Pawn pawn, int ringCount) => activeStrikeRings[pawn] = ringCount;
-        public static void EndStrike(Pawn pawn) => activeStrikeRings.Remove(pawn);
-        public static bool TryGetActiveStrike(Pawn pawn, out int ringCount) => activeStrikeRings.TryGetValue(pawn, out ringCount);
+        public static void BeginStrike(Pawn pawn, int ringCount) => activeStrikes[pawn] = new ActiveStrike { ringCount = ringCount };
+
+        public static bool TryGetActiveStrike(Pawn pawn, out int ringCount)
+        {
+            ringCount = activeStrikes.TryGetValue(pawn, out ActiveStrike strike) ? strike.ringCount : 0;
+            return strike != null;
+        }
+
+
+        /// <summary>
+        /// Called when the strike's damage actually reaches a target.
+        /// </summary>
+        public static void MarkStrikeLanded(Pawn pawn)
+        {
+            if (activeStrikes.TryGetValue(pawn, out ActiveStrike strike)) strike.landed = true;
+        }
+
+        /// <summary>
+        /// Ends the strike and returns whether it landed.
+        /// </summary>
+        public static bool EndStrike(Pawn pawn)
+        {
+            bool landed = activeStrikes.TryGetValue(pawn, out ActiveStrike strike) && strike.landed;
+            activeStrikes.Remove(pawn);
+            return landed;
+        }
     }
 }

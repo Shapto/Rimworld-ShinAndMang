@@ -17,6 +17,8 @@ namespace ShinAndMang
 
         public static FleckDef Fleck_ShinSpark;
 
+        public static FleckDef Fleck_MangSpark;
+
         public static HediffDef Mang_Rings;
 
         public static JobDef FormMang;
