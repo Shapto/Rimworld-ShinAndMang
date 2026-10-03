@@ -43,7 +43,7 @@ namespace ShinAndMang
         }
 
         // Removed when unused for too long, or when the holder is downed.
-        public override bool ShouldRemove => /* TODO */ false;
+        public override bool ShouldRemove => ticksUntilFade <= 0 || pawn.Downed;
 
         // Label
         public override string LabelInBrackets => $"{RingCount} rings, {ticksUntilFade / 60f:0}s";

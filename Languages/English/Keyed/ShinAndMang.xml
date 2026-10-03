@@ -42,7 +42,7 @@
   <ShinAndMang_Sidekick_Targeting>{0}: +{1} damage</ShinAndMang_Sidekick_Targeting>
   <ShinAndMang_Hornet_Effect>- Accuracy and melee hit chance +{0}. Melee dodge chance +{1}.\n- Damage dealt: currently +{2}. Increases with mood above 50%, up to +{3} at 95% mood.\n- Hitting whoever last hurt the user (within 10 seconds): mood +{4}.</ShinAndMang_Hornet_Effect>
   <ShinAndMang_Hornet_Targeting>{0}: +{1} damage</ShinAndMang_Hornet_Targeting>
-  <ShinAndMang_SettingRestartRequired>Restart required for the settings below:</ShinAndMang_SettingRestartRequired>
+  <ShinAndMang_SettingRestartRequired>Restart required for the settings below, since every % between novice and Sovereign is interpolated.:</ShinAndMang_SettingRestartRequired>
   <ShinAndMang_SettingNoviceSharpArmor>Shin (心) sharp armor at novice</ShinAndMang_SettingNoviceSharpArmor>
   <ShinAndMang_SettingSovereignSharpArmor>Shin (心) sharp armor at Sovereign</ShinAndMang_SettingSovereignSharpArmor>
   <ShinAndMang_SettingNoviceBluntArmor>Shin (心) blunt armor at novice</ShinAndMang_SettingNoviceBluntArmor>

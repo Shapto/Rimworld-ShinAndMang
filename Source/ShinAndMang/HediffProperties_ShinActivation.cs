@@ -82,7 +82,7 @@ namespace ShinAndMang
 
             yield return shinToggle;
 
-            if (Prefs.DevMode)
+            if (DebugSettings.godMode)
             {
                 yield return new Command_Action
                 {
@@ -96,6 +96,16 @@ namespace ShinAndMang
                 {
                     defaultLabel = "DEV: Form Mang ring",
                     action = () => MangMechanics.TryFormRing(parent.pawn)
+                };
+                yield return new Command_Action
+                {
+                    defaultLabel = "DEV: Weapon shape",
+                    action = () =>
+                    {
+                        ThingDef weaponDef = parent.pawn.equipment?.Primary?.def;
+                        if (weaponDef == null) return;
+                        WeaponShape shape = WeaponShapeAnalyzer.GetShape(weaponDef);
+                    }
                 };
             }
         }
