@@ -58,4 +58,6 @@
   <ShinAndMang_MangTargetDescription>How many Mang (望) rings to form, used by Form Mang (望) and when forming rings before an attack. Left-click to raise, right-click to lower.</ShinAndMang_MangTargetDescription>
   <ShinAndMang_FormMangLabel>Form Mang (望)</ShinAndMang_FormMangLabel>
   <ShinAndMang_FormMangDescription>Stand still and form Mang (望) rings one after another, up to {0} rings. Each ring costs mood: forming up to the target costs {1}, more if a ring fizzles. Rings beyond the safe amount can push the user into a mental break. Being hurt interrupts the formation, and formed rings fade if not used.</ShinAndMang_FormMangDescription>
+  <ShinAndMang_AutoMangLabel>Auto Mang (望)</ShinAndMang_AutoMangLabel>
+  <ShinAndMang_AutoMangDescription>Form Mang (望) rings automatically while winding up an attack: while aiming, or between melee swings. Rings form up to the ring setting, but never past the safe amount, so the user won't be pushed into a mental break.</ShinAndMang_AutoMangDescription>
 </LanguageData>
