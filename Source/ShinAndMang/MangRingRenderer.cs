@@ -40,10 +40,10 @@ namespace ShinAndMang
         /// "diameter" is the ellipse's long axis in world units, "brightness" goes from 0 (dim) to 1 (bright),
         /// and "intensity" fades the whole ring, 0 being invisible.
         /// </summary>
-        public static void DrawRing(Vector3 position, float angle, float diameter, float backAltitude, float frontAltitude, bool swapHalves, float brightness, float intensity = 1f)
+        public static void DrawRing(Vector3 position, float angle, float diameter, float backAltitude, float frontAltitude, bool swapHalves, float brightness, float intensity = 1f, float halfSeparation = 0f)
         {
             Color ringColor = Color.Lerp(DimGold, BrightGold, brightness) * intensity;
-            DrawHalves(RingMaterial, EllipseHeightShare, position, angle, diameter, backAltitude, frontAltitude, swapHalves, ringColor);
+            DrawHalves(RingMaterial, EllipseHeightShare, position, angle, diameter, backAltitude, frontAltitude, swapHalves, ringColor, halfSeparation);
         }
 
         /// <summary>
@@ -52,13 +52,13 @@ namespace ShinAndMang
         /// </summary>
         public static void DrawFlare(Vector3 position, float angle, float ringDiameter, float scale, float backAltitude, float frontAltitude, bool swapHalves, float intensity)
         {
-            DrawHalves(FlareMaterial, FlareEllipseHeightShare, position, angle, ringDiameter * scale, backAltitude, frontAltitude, swapHalves, BrightGold * intensity);
+            DrawHalves(FlareMaterial, FlareEllipseHeightShare, position, angle, ringDiameter * scale, backAltitude, frontAltitude, swapHalves, BrightGold * intensity, 0f);
         }
 
         /// <summary>
         /// Draws a half-texture (ellipse centered on its left edge) as a full shape: the mirrored half behind, the other in front.
         /// </summary>
-        private static void DrawHalves(Material material, float ellipseHeightShare, Vector3 position, float angle, float diameter, float backAltitude, float frontAltitude, bool swapHalves, Color color)
+        private static void DrawHalves(Material material, float ellipseHeightShare, Vector3 position, float angle, float diameter, float backAltitude, float frontAltitude, bool swapHalves, Color color, float halfSeparation)
         {
             if (diameter <= 0.001f || color.maxColorComponent <= 0f) return;
 
@@ -70,7 +70,8 @@ namespace ShinAndMang
 
             // The texture's ellipse is centered on its left edge, or on its right edge when mirrored,
             // so each half is shifted by half the quad's width to put that edge on the shape's center.
-            Vector3 halfWidthOffset = rotation * new Vector3(scale.x / 2f, 0f, 0f);
+            // When shattering, the halves are pushed further apart by halfSeparation.
+            Vector3 halfWidthOffset = rotation * new Vector3(scale.x / 2f + halfSeparation, 0f, 0f);
             Vector3 unmirroredPosition = position + halfWidthOffset;
             Vector3 mirroredPosition = position - halfWidthOffset;
 

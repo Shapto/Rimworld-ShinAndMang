@@ -40,6 +40,18 @@ namespace ShinAndMang
         private const float SparkMinimumSpeed = 0.5f;
         private const float SparkMaximumSpeed = 1.0f;
 
+        // Unstable
+        private const float UnstableFlickerSpeed = 25f;     // how fast it cuts in and out
+        private const float UnstableWobbleSpeed = 12f;
+        private const float UnstableWobble = 0.15f;         // how much its size wavers
+
+        // Endings
+        private const float FadeOutSeconds = 0.4f;
+        private const float ShatterSeconds = 0.45f;
+        private const float ShatterDistance = 0.6f;          // how far the halves fly apart, relative to the ring's diameter
+        private const float FizzleFormSeconds = 0.35f;       // how long a failing ring flickers before it breaks
+        private const int ShatterSparkCount = 6;
+
         private enum RingMode { Weapon, Torso }
 
         private struct RingAnchor
@@ -57,10 +69,26 @@ namespace ShinAndMang
             public RingMode mode;
             public float transitionProgress = 1f;
             public float visualTime;
+            public Vector3 pawnPosition;
             public List<RingAnchor> transitionStart = new List<RingAnchor>();
             public List<RingAnchor> lastShown = new List<RingAnchor>();
             public List<float> ringAges = new List<float>();
         }
+
+        private enum RingEnding { FadeOut, Shatter, Fizzle }
+
+        private class GhostRing
+        {
+            public Pawn pawn;
+            public RingAnchor anchor;
+            public Vector3 pawnPositionAtStart;
+            public RingEnding ending;
+            public int ringIndex;
+            public float age;
+            public bool hasBurst;
+        }
+
+        private readonly List<GhostRing> ghostRings = new List<GhostRing>();
 
         private readonly Dictionary<Pawn, PawnRingState> statesByPawn = new Dictionary<Pawn, PawnRingState>();
         private readonly List<RingAnchor> anchorBuffer = new List<RingAnchor>();
@@ -86,6 +114,7 @@ namespace ShinAndMang
                 if (mode == RingMode.Torso) AddTorsoAnchors(pawn, ringCount, maximumRings);
 
                 PawnRingState state = GetState(pawn, mode);
+                state.pawnPosition = pawn.DrawPos;
                 state.visualTime += deltaTime;
                 UpdateRingAges(state, ringCount, deltaTime);
 
@@ -118,7 +147,17 @@ namespace ShinAndMang
 
                     float growth = Mathf.SmoothStep(0f, 1f, state.ringAges[ringIndex] / GrowSeconds);
                     float brightness = 0.5f + 0.5f * Mathf.Sin(state.visualTime * ShimmerSpeed + ringIndex * ShimmerPhasePerRing);
-                    MangRingRenderer.DrawRing(shown.position, shown.angle, shown.diameter * growth, shown.backAltitude, shown.frontAltitude, shown.swapHalves, brightness);
+                    float diameter = shown.diameter * growth;
+                    float intensity = 1f;
+
+                    // An unstable ring (still in the unreliable zone) flickers and wavers for as long as it's held.
+                    if (!MangMechanics.IsRingStable(pawn, ringIndex + 1))
+                    {
+                        intensity = UnstableFlicker(state.visualTime, ringIndex);
+                        diameter *= UnstableWobbleFactor(state.visualTime, ringIndex);
+                        brightness = 0f;
+                    }
+                    MangRingRenderer.DrawRing(shown.position, shown.angle, diameter, shown.backAltitude, shown.frontAltitude, shown.swapHalves, brightness, intensity);
                     // Formation burst: a flash, flames swelling outward around the ring, and a shockwave ring.
                     float burstAge = state.ringAges[ringIndex];
                     float burstProgress = burstAge / BurstSeconds;
@@ -137,7 +176,13 @@ namespace ShinAndMang
                     }
                 }
             }
-
+            // Endings: fading, shattering and fizzling rings, drawn until they finish.
+            for (int ghostIndex = ghostRings.Count - 1; ghostIndex >= 0; ghostIndex--)
+            {
+                GhostRing ghost = ghostRings[ghostIndex];
+                ghost.age += deltaTime;
+                if (!DrawGhost(ghost, deltaTime > 0f)) ghostRings.RemoveAt(ghostIndex);
+            }
             ForgetPawnsWithoutRings();
         }
 
@@ -261,5 +306,123 @@ namespace ShinAndMang
             float outwardAngle = Mathf.Atan2(offsetFromCenter.x, offsetFromCenter.z) * Mathf.Rad2Deg;
             ShinVisuals.ThrowSparkAt(ShinDefOf.Fleck_MangSpark, map, ring.position + offsetFromCenter, outwardAngle, Rand.Range(SparkMinimumSpeed, SparkMaximumSpeed));
         }
+
+        // Endings
+
+        /// <summary>
+        /// The pawn's rings were removed: they shatter on collapse, otherwise fade out.
+        /// </summary>
+        public static void NotifyRingsEnded(Pawn pawn, bool shatter)
+        {
+            MapComponent_MangRings ringComponent = pawn.MapHeld?.GetComponent<MapComponent_MangRings>();
+            if (ringComponent == null || !ringComponent.statesByPawn.TryGetValue(pawn, out PawnRingState state)) return;
+
+            for (int ringIndex = 0; ringIndex < state.lastShown.Count; ringIndex++)
+            {
+                ringComponent.ghostRings.Add(new GhostRing
+                {
+                    pawn = pawn,
+                    anchor = state.lastShown[ringIndex],
+                    pawnPositionAtStart = state.pawnPosition,
+                    ending = shatter ? RingEnding.Shatter : RingEnding.FadeOut,
+                    ringIndex = ringIndex
+                });
+            }
+            ringComponent.statesByPawn.Remove(pawn);
+        }
+
+        /// <summary>
+        /// Ring number "ringNumber" failed to form: an unstable ring flickers in at its spot, then shatters.
+        /// </summary>
+        public static void NotifyFizzle(Pawn pawn, int ringNumber)
+        {
+            MapComponent_MangRings ringComponent = pawn.Map?.GetComponent<MapComponent_MangRings>();
+            if (ringComponent == null) return;
+
+            ringComponent.anchorBuffer.Clear();
+            int maximumRings = Mathf.Max(ringNumber, MangMechanics.MaximumRings(pawn));
+            if (!ringComponent.TryAddWeaponAnchors(pawn, ringNumber, maximumRings)) ringComponent.AddTorsoAnchors(pawn, ringNumber, maximumRings);
+
+            ringComponent.ghostRings.Add(new GhostRing
+            {
+                pawn = pawn,
+                anchor = ringComponent.anchorBuffer[ringNumber - 1],
+                pawnPositionAtStart = pawn.DrawPos,
+                ending = RingEnding.Fizzle,
+                ringIndex = ringNumber - 1
+            });
+        }
+
+        /// <summary>
+        /// Draws one ending ring. Returns false once it has finished.
+        /// </summary>
+        private bool DrawGhost(GhostRing ghost, bool gameRunning)
+        {
+            // Follow the pawn (or its corpse) as it moves or falls.
+            Vector3 currentPawnPosition = ghost.pawn.Spawned ? ghost.pawn.DrawPos : ghost.pawn.Corpse?.DrawPos ?? ghost.pawnPositionAtStart;
+            RingAnchor anchor = ghost.anchor;
+            anchor.position += currentPawnPosition - ghost.pawnPositionAtStart;
+
+            switch (ghost.ending)
+            {
+                case RingEnding.FadeOut:
+                    {
+                        float fadeProgress = ghost.age / FadeOutSeconds;
+                        if (fadeProgress >= 1f) return false;
+                        MangRingRenderer.DrawRing(anchor.position, anchor.angle, anchor.diameter, anchor.backAltitude, anchor.frontAltitude, anchor.swapHalves, 0.5f, 1f - fadeProgress);
+                        return true;
+                    }
+
+                case RingEnding.Shatter:
+                    return DrawShatter(ghost, anchor, ghost.age, gameRunning);
+
+                case RingEnding.Fizzle:
+                    {
+                        // First it flickers into place, unstable...
+                        if (ghost.age < FizzleFormSeconds)
+                        {
+                            float growth = Mathf.SmoothStep(0f, 1f, ghost.age / FizzleFormSeconds);
+                            float diameter = anchor.diameter * growth * UnstableWobbleFactor(ghost.age, ghost.ringIndex);
+                            MangRingRenderer.DrawRing(anchor.position, anchor.angle, diameter, anchor.backAltitude, anchor.frontAltitude, anchor.swapHalves, 0f, UnstableFlicker(ghost.age, ghost.ringIndex));
+                            return true;
+                        }
+                        // ...then cracks and shatters.
+                        return DrawShatter(ghost, anchor, ghost.age - FizzleFormSeconds, gameRunning);
+                    }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// The halves break apart and fade, with a burst of sparks as they crack.
+        /// </summary>
+        private bool DrawShatter(GhostRing ghost, RingAnchor anchor, float shatterAge, bool gameRunning)
+        {
+            float shatterProgress = shatterAge / ShatterSeconds;
+            if (shatterProgress >= 1f) return false;
+
+            if (!ghost.hasBurst && gameRunning)
+            {
+                ghost.hasBurst = true;
+                for (int sparkIndex = 0; sparkIndex < ShatterSparkCount; sparkIndex++) ThrowRingSpark(anchor);
+            }
+
+            float easedProgress = 1f - (1f - shatterProgress) * (1f - shatterProgress);
+            float separation = easedProgress * anchor.diameter * ShatterDistance;
+            MangRingRenderer.DrawRing(anchor.position, anchor.angle, anchor.diameter, anchor.backAltitude, anchor.frontAltitude, anchor.swapHalves, 0f, 1f - shatterProgress, separation);
+            return true;
+        }
+
+        // Unstable
+
+        /// <summary>
+        /// Cuts between visible and nearly gone, irregularly.
+        /// </summary>
+        private static float UnstableFlicker(float time, int ringIndex) => Mathf.PerlinNoise(time * UnstableFlickerSpeed, ringIndex * 3.7f) > 0.4f ? 1f : 0.25f;
+
+        /// <summary>
+        /// A size multiplier wavering around 1.
+        /// </summary>
+        private static float UnstableWobbleFactor(float time, int ringIndex) => 1f + (Mathf.PerlinNoise(time * UnstableWobbleSpeed, 11.3f + ringIndex) - 0.5f) * UnstableWobble;
     }
 }

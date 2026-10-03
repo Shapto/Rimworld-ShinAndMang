@@ -36,14 +36,20 @@ namespace ShinAndMang
             ticksUntilFade -= 1;
         }
 
+        public override void PostRemoved()
+        {
+            base.PostRemoved();
+            MapComponent_MangRings.NotifyRingsEnded(pawn, pawn.Downed || pawn.Dead);
+        }
+
         public override void PostAdd(DamageInfo? dinfo)
         {
             base.PostAdd(dinfo);
             Notify_RingAdded();
         }
 
-        // Removed when unused for too long, or when the holder is downed.
-        public override bool ShouldRemove => ticksUntilFade <= 0 || pawn.Downed;
+        // Removed when unused for too long, when the holder is downed, or when a player's pawn is undrafted.
+        public override bool ShouldRemove => ticksUntilFade <= 0 || pawn.Downed || (pawn.Faction != null && pawn.Faction.IsPlayer && !pawn.Drafted);
 
         // Label
         public override string LabelInBrackets => $"{RingCount} rings, {ticksUntilFade / 60f:0}s";

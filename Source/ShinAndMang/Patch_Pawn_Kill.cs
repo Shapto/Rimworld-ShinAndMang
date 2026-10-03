@@ -16,7 +16,10 @@ namespace ShinAndMang
     {
         public static void Postfix(Pawn __instance)
         {
-            if (__instance.Dead) ShinMechanics.EndShin(__instance);
+            if (!__instance.Dead) return;
+
+            ShinMechanics.EndShin(__instance);
+            MangMechanics.ConsumeRings(__instance);
         }
     }
 }

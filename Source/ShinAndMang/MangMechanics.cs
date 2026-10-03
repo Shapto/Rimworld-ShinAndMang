@@ -117,7 +117,7 @@ namespace ShinAndMang
             }
             if (!Rand.Chance(RingSuccessChance(pawn, ringNumber)))
             {
-                if (pawn.Spawned) MoteMaker.ThrowText(pawn.DrawPos, pawn.Map, "ShinAndMang_RingFizzled".Translate(), Color.gray);
+                if (pawn.Spawned) MapComponent_MangRings.NotifyFizzle(pawn, ringNumber);
                 return false;
             }
             Hediff_Mang rings = GetRings(pawn);
@@ -207,6 +207,11 @@ namespace ShinAndMang
         {
             if (activeStrikes.TryGetValue(pawn, out ActiveStrike strike)) strike.landed = true;
         }
+
+        /// <summary>
+        /// True if ring number "ringNumber" is fully reliable for this pawn; otherwise it's drawn unstable.
+        /// </summary>
+        public static bool IsRingStable(Pawn pawn, int ringNumber) => RingSuccessChance(pawn, ringNumber) >= 1f;
 
         /// <summary>
         /// Ends the strike and returns whether it landed.
