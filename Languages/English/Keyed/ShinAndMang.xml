@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <ShinAndMang_ShinGizmoLabel>Shin (心)</ShinAndMang_ShinGizmoLabel>
+  <ShinAndMang_ShinGizmoLabel>Shin TEST (心)</ShinAndMang_ShinGizmoLabel>
   <ShinAndMang_SettingAllowTeaching>Allow teaching Shin (心) through conversation</ShinAndMang_SettingAllowTeaching>
   <ShinAndMang_ShinGizmoDescription>Manifest Shin (心), strengthening the body.\n\nCosts {0} mood. Only lasts while drafted.</ShinAndMang_ShinGizmoDescription>
   <ShinAndMang_ShinFades>{0}'s Shin (心) fades.</ShinAndMang_ShinFades>
