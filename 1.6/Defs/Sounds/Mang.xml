@@ -13,19 +13,6 @@
 					</li>
 				</grains>
 				<volumeRange>90~100</volumeRange>
-				<paramMappings>
-					<li>
-						<inParam Class="SoundParamSource_CameraAltitude" />
-						<outParam Class="SoundParamTarget_Volume" />
-						<curve>
-							<points>
-								<li>(15, 1)</li>
-								<li>(40, 0.4)</li>
-								<li>(65, 0)</li>
-							</points>
-						</curve>
-					</li>
-				</paramMappings>
 				<pitchRange>0.97~1.03</pitchRange>
 			</li>
 		</subSounds>
