@@ -20,6 +20,14 @@ namespace ShinAndMang
         public static HediffDef Mang_Rings;
 
         public static JobDef FormMang;
+
+        public static SoundDef Mang_RingForm;
+
+        public static SoundDef Mang_RingFormComplete;
+
+        public static SoundDef Shin_Add;
+
+        public static SoundDef Shin_Loop;
         static ShinDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(ShinDefOf));
     }
 }

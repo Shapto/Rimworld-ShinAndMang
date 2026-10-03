@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using Verse.Sound;
 using static RimWorld.PsychicRitualRoleDef;
 
 namespace ShinAndMang
@@ -123,6 +124,7 @@ namespace ShinAndMang
                 rings.Severity += 1f;
                 rings.Notify_RingAdded();
             }
+            if (pawn.Spawned) ShinDefOf.Mang_RingForm.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
             return true;
         }
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <SoundDef>
+    <defName>Shin_Add</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Shin/shin_add</clipPath>
+          </li>
+        </grains>
+        <volumeRange>85~90</volumeRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Shin_Loop</defName>
+    <context>MapOnly</context>
+    <sustain>true</sustain>
+    <priorityMode>PrioritizeNearest</priorityMode>
+    <maxSimultaneous>3</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Shin/shin_loop</clipPath>
+          </li>
+        </grains>
+        <volumeRange>40~45</volumeRange>
+        <sustainLoop>true</sustainLoop>
+        <sustainAttack>0.2</sustainAttack>
+        <sustainRelease>0.15</sustainRelease>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>

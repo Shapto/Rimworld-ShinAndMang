@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+	<SoundDef>
+		<defName>Mang_RingForm</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>4</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>Mang/RingForm</clipPath>
+					</li>
+				</grains>
+				<volumeRange>90~100</volumeRange>
+				<pitchRange>0.97~1.03</pitchRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+	<SoundDef>
+		<defName>Mang_RingFormComplete</defName>
+		<context>MapOnly</context>
+		<maxSimultaneous>1</maxSimultaneous>
+		<subSounds>
+			<li>
+				<grains>
+					<li Class="AudioGrain_Clip">
+						<clipPath>Mang/RingFormComplete</clipPath>
+					</li>
+				</grains>
+				<volumeRange>100~100</volumeRange>
+			</li>
+		</subSounds>
+	</SoundDef>
+
+</Defs>

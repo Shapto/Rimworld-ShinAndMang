@@ -26,9 +26,13 @@ namespace ShinAndMang
 
         // Timing
         private const float ModeTransitionSeconds = 0.35f;
-        private const float GrowSeconds = 0.25f;
+        private const float GrowSeconds = 0.15f;
         private const float ShimmerSpeed = 4f;
         private const float ShimmerPhasePerRing = 1.3f;
+        private const float BurstSeconds = 0.25f;
+        private const float BurstMaximumScale = 2.8f;   // how far the burst expands, relative to the ring
+        private const float FlareStartScale = 0.9f;   // starts slightly inside the ring's line, so the flames grow out of it
+        private const float FlareEndScale = 1.8f;          // how far the flames swell outward
 
         private enum RingMode { Weapon, Torso }
 
@@ -109,6 +113,22 @@ namespace ShinAndMang
                     float growth = Mathf.SmoothStep(0f, 1f, state.ringAges[ringIndex] / GrowSeconds);
                     float brightness = 0.5f + 0.5f * Mathf.Sin(state.visualTime * ShimmerSpeed + ringIndex * ShimmerPhasePerRing);
                     MangRingRenderer.DrawRing(shown.position, shown.angle, shown.diameter * growth, shown.backAltitude, shown.frontAltitude, shown.swapHalves, brightness);
+                    // Formation burst: a flash, flames swelling outward around the ring, and a shockwave ring.
+                    float burstAge = state.ringAges[ringIndex];
+                    float burstProgress = burstAge / BurstSeconds;
+                    if (burstProgress < 1f)
+                    {
+                        float easedProgress = 1f - (1f - burstProgress) * (1f - burstProgress);   // fast at first, slowing down
+
+                        // Flare: stays bright for a moment, then fades as it spreads.
+                        float flareScale = Mathf.Lerp(FlareStartScale, FlareEndScale, easedProgress);
+                        float flareIntensity = 1f - burstProgress * burstProgress;
+                        MangRingRenderer.DrawFlare(shown.position, shown.angle, shown.diameter, flareScale, shown.backAltitude, shown.frontAltitude, shown.swapHalves, flareIntensity);
+
+                        // Shockwave ring.
+                        float burstScale = Mathf.Lerp(1f, BurstMaximumScale, easedProgress);
+                        MangRingRenderer.DrawRing(shown.position, shown.angle, shown.diameter * burstScale, shown.backAltitude, shown.frontAltitude, shown.swapHalves, 1f, 1f - burstProgress);
+                    }
                 }
             }
 

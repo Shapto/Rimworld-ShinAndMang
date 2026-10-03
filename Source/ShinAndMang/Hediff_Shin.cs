@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using Verse.Sound;
 
 namespace ShinAndMang
 {
@@ -15,17 +16,19 @@ namespace ShinAndMang
         public override bool ShouldRemove => !ShinMechanics.IsInCombat(pawn);
         private const int GainIntervalTicks = 250;
         private const int SparkIntervalTicks = 30;
+        private Sustainer loopSustainer;
         private Mote auraMote;
         public override void PostTick()
         {
             base.PostTick();
-
+            ShinDefOf.Shin_Add.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
             if (pawn.Spawned)
             {
                 if (auraMote == null || auraMote.Destroyed) auraMote = MoteMaker.MakeAttachedOverlay(pawn, ShinDefOf.Mote_ShinAura, Vector3.zero);
                 auraMote.Maintain();
-
                 if (pawn.IsHashIntervalTick(SparkIntervalTicks)) ShinVisuals.ThrowSpark(pawn);
+                if (loopSustainer == null || loopSustainer.Ended) loopSustainer = ShinDefOf.Shin_Loop.TrySpawnSustainer(SoundInfo.InMap(pawn, MaintenanceType.PerTick));
+                loopSustainer?.Maintain();
             }
 
             if (!pawn.Spawned) return;

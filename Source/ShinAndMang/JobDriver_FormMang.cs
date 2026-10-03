@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using Verse.Sound;
 
 namespace ShinAndMang
 {
@@ -15,10 +16,13 @@ namespace ShinAndMang
     /// </summary>
     public class JobDriver_FormMang : JobDriver
     {
-        private const int TicksPerRing = 45;   // about one ring every 0.75 seconds
+        private const int TicksPerRing = 20;   // about one ring every 0.33 seconds
 
         private int ticksUntilNextRing = TicksPerRing;
+
         private int startTick;
+
+        private int ringsFormed;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed) => true;
 
@@ -52,19 +56,25 @@ namespace ShinAndMang
                     return;
                 }
 
-                MangMechanics.TryFormRing(pawn);
+                if (MangMechanics.TryFormRing(pawn)) ringsFormed++;
             };
 
             // Concentration breaks if the pawn is hurt after starting.
             formRings.AddFailCondition(() => pawn.mindState.lastHarmTick > startTick);
-
+            // Concluding sound, whenever the job ends (finished, interrupted or cancelled), if any ring formed.
+            AddFinishAction(jobCondition =>
+            {
+                if (ringsFormed > 0 && pawn.Spawned) ShinDefOf.Mang_RingFormComplete.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
+            });
             yield return formRings;
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
-            // TODO: save ticksUntilNextRing and startTick
+            Scribe_Values.Look(ref ticksUntilNextRing, "ticksUntilNextRing", TicksPerRing);
+            Scribe_Values.Look(ref startTick, "startTick", 0);
+            Scribe_Values.Look(ref ringsFormed, "ringsFormed", 0);
         }
     }
 }
