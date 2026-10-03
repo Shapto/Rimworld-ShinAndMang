@@ -20,8 +20,6 @@ namespace ShinAndMang
 
         private int ticksUntilNextRing = TicksPerRing;
 
-        private int startTick;
-
         private int ringsFormed;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed) => true;
@@ -30,7 +28,6 @@ namespace ShinAndMang
         {
             Toil formRings = ToilMaker.MakeToil("FormMang");
             formRings.defaultCompleteMode = ToilCompleteMode.Never;
-            formRings.initAction = () => startTick = Find.TickManager.TicksGame;
             formRings.tickAction = () =>
             {
                 ticksUntilNextRing--;
@@ -73,7 +70,6 @@ namespace ShinAndMang
         {
             base.ExposeData();
             Scribe_Values.Look(ref ticksUntilNextRing, "ticksUntilNextRing", TicksPerRing);
-            Scribe_Values.Look(ref startTick, "startTick", 0);
             Scribe_Values.Look(ref ringsFormed, "ringsFormed", 0);
         }
     }
