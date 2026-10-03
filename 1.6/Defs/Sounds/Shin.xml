@@ -12,7 +12,20 @@
             <clipPath>Shin/shin_add</clipPath>
           </li>
         </grains>
-        <volumeRange>40~45</volumeRange>
+        <volumeRange>30~35</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
       </li>
     </subSounds>
   </SoundDef>
@@ -30,7 +43,20 @@
             <clipPath>Shin/shin_loop</clipPath>
           </li>
         </grains>
-        <volumeRange>18~22</volumeRange>
+        <volumeRange>15~18</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
         <sustainLoop>true</sustainLoop>
         <sustainAttack>0.2</sustainAttack>
         <sustainRelease>0.15</sustainRelease>
