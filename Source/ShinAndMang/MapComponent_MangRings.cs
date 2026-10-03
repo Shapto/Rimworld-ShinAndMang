@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +19,21 @@ namespace ShinAndMang
         private const float RingGapFactor = 2.6f;
         private const float WeaponAltitudeOffset = 0.003f;
 
+        // Barrel
+        private const float BarrelFirstRingDistance = 0.08f;   // gap between the muzzle and the first ring, relative to the weapon's length
+        private const float BarrelRingSpacing = 0.1f;          // gap between rings, relative to the weapon's length
+        private const float BarrelRingWidthFactor = 3f;        // ring diameter relative to the barrel's width
+        private const float BarrelRingMinimumSize = 0.18f;     // ring diameter at least this, relative to the weapon's length
+
         // Torso
         private const float TorsoRingDiameter = 0.8f;
-        private const float TorsoLowestOffset = -0.15f;
-        private const float TorsoHighestOffset = 0.25f;
+        private const float TorsoLowestOffset = -0.3f;
+        private const float TorsoHighestOffset = 0.45f;
         private const float TorsoAltitudeOffset = 0.1f;
+        private const float TorsoRingIntensity = 0.8f;   // torso rings are dimmer than weapon rings
+        private const float TorsoRingGapFactor = 1.2f;       // ring diameter relative to the torso's width, leaving a gap
+        private const float TorsoRingLowestShare = 0.2f;     // rings span this part of the body's height
+        private const float TorsoRingHighestShare = 0.7f;
 
         // Timing
         private const float ModeTransitionSeconds = 0.35f;
@@ -52,7 +63,7 @@ namespace ShinAndMang
         private const float FizzleFormSeconds = 0.35f;       // how long a failing ring flickers before it breaks
         private const int ShatterSparkCount = 6;
 
-        private enum RingMode { Weapon, Torso }
+        private enum RingMode { Weapon, Barrel, Torso }
 
         private struct RingAnchor
         {
@@ -62,6 +73,7 @@ namespace ShinAndMang
             public float backAltitude;
             public float frontAltitude;
             public bool swapHalves;
+            public float intensity;
         }
 
         private class PawnRingState
@@ -76,6 +88,7 @@ namespace ShinAndMang
         }
 
         private enum RingEnding { FadeOut, Shatter, Fizzle }
+
 
         private class GhostRing
         {
@@ -98,6 +111,15 @@ namespace ShinAndMang
         {
         }
 
+        /// <summary>
+        /// True if the pawn is fighting in melee right now: on a melee attack job, or in the pause around a melee strike.
+        /// </summary>
+        private static bool IsFightingInMelee(Pawn pawn)
+        {
+            if (pawn.CurJobDef == JobDefOf.AttackMelee) return true;
+            return pawn.stances?.curStance is Stance_Busy busyStance && busyStance.verb is Verb_MeleeAttack;
+        }
+
         public override void MapComponentUpdate()
         {
             if (Find.CurrentMap != map) return;
@@ -110,7 +132,7 @@ namespace ShinAndMang
 
                 anchorBuffer.Clear();
                 int maximumRings = Mathf.Max(ringCount, MangMechanics.MaximumRings(pawn));
-                RingMode mode = TryAddWeaponAnchors(pawn, ringCount, maximumRings) ? RingMode.Weapon : RingMode.Torso;
+                RingMode mode = TryAddWeaponAnchors(pawn, ringCount, maximumRings, out RingMode weaponMode) ? weaponMode : RingMode.Torso;
                 if (mode == RingMode.Torso) AddTorsoAnchors(pawn, ringCount, maximumRings);
 
                 PawnRingState state = GetState(pawn, mode);
@@ -142,22 +164,24 @@ namespace ShinAndMang
                         shown.position = Vector3.Lerp(start.position, anchor.position, blend);
                         shown.angle = Mathf.LerpAngle(start.angle, anchor.angle, blend);
                         shown.diameter = Mathf.Lerp(start.diameter, anchor.diameter, blend);
+                        shown.intensity = Mathf.Lerp(start.intensity, anchor.intensity, blend);
                     }
                     state.lastShown.Add(shown);
 
                     float growth = Mathf.SmoothStep(0f, 1f, state.ringAges[ringIndex] / GrowSeconds);
                     float brightness = 0.5f + 0.5f * Mathf.Sin(state.visualTime * ShimmerSpeed + ringIndex * ShimmerPhasePerRing);
                     float diameter = shown.diameter * growth;
-                    float intensity = 1f;
+                    float intensity = shown.intensity;
 
                     // An unstable ring (still in the unreliable zone) flickers and wavers for as long as it's held.
                     if (!MangMechanics.IsRingStable(pawn, ringIndex + 1))
                     {
-                        intensity = UnstableFlicker(state.visualTime, ringIndex);
+                        intensity *= UnstableFlicker(state.visualTime, ringIndex);
                         diameter *= UnstableWobbleFactor(state.visualTime, ringIndex);
                         brightness = 0f;
                     }
                     MangRingRenderer.DrawRing(shown.position, shown.angle, diameter, shown.backAltitude, shown.frontAltitude, shown.swapHalves, brightness, intensity);
+
                     // Formation burst: a flash, flames swelling outward around the ring, and a shockwave ring.
                     float burstAge = state.ringAges[ringIndex];
                     float burstProgress = burstAge / BurstSeconds;
@@ -188,12 +212,22 @@ namespace ShinAndMang
 
         // Anchors
 
-        private bool TryAddWeaponAnchors(Pawn pawn, int ringCount, int maximumRings)
+        private bool TryAddWeaponAnchors(Pawn pawn, int ringCount, int maximumRings, out RingMode weaponMode)
         {
-            if (!WeaponDrawRecord.TryGetCurrent(pawn, out WeaponDrawRecord record)) return false;
-            if (record.weaponDef == null || !record.weaponDef.IsMeleeWeapon) return false;
+
+            weaponMode = RingMode.Weapon;
+            if (!WeaponDrawRecord.TryGetCurrent(pawn, out WeaponDrawRecord record) || record.weaponDef == null) return false;
 
             WeaponShape shape = WeaponShapeAnalyzer.GetShape(record.weaponDef);
+            // Weapons with a gun use the barrel, except while the pawn is fighting in melee (bayonets, gunlances and the like).
+            if (record.weaponDef.IsRangedWeapon && !IsFightingInMelee(pawn))
+            {
+                weaponMode = RingMode.Barrel;
+                AddBarrelAnchors(record, shape, ringCount);
+                return true;
+            }
+            if (record.weaponDef.tools.NullOrEmpty() && !record.weaponDef.IsMeleeWeapon) return false;
+
             for (int ringIndex = 0; ringIndex < ringCount; ringIndex++)
             {
                 if (!shape.TryGetRingPlacement(ringIndex, maximumRings, out Vector2 spritePosition, out Vector2 spriteDirection, out float spriteWidth))
@@ -213,28 +247,82 @@ namespace ShinAndMang
                     diameter = record.SpriteLengthToWorld(spriteWidth) * RingGapFactor,
                     backAltitude = worldPosition.y - WeaponAltitudeOffset,
                     frontAltitude = worldPosition.y + WeaponAltitudeOffset,
-                    swapHalves = record.flipped
+                    swapHalves = record.flipped,
+                    intensity = 1f
                 });
             }
             return true;
         }
 
+        /// <summary>
+        /// Rings in front of the muzzle, lined up along the barrel, the first closest to the gun.
+        /// </summary>
+        private void AddBarrelAnchors(WeaponDrawRecord record, WeaponShape shape, int ringCount)
+        {
+            Vector3 muzzleWorld = record.SpritePointToWorld(shape.muzzlePoint);
+            Vector3 barrelDirection = record.SpritePointToWorld(shape.muzzlePoint + shape.forward * 0.05f) - muzzleWorld;
+            barrelDirection.y = 0f;
+            barrelDirection.Normalize();
+            float barrelAngle = Mathf.Atan2(barrelDirection.x, barrelDirection.z) * Mathf.Rad2Deg;
+
+            float weaponWorldLength = record.SpriteLengthToWorld(shape.length);
+            float diameter = Mathf.Max(record.SpriteLengthToWorld(shape.muzzleWidth) * BarrelRingWidthFactor, weaponWorldLength * BarrelRingMinimumSize);
+
+            for (int ringIndex = 0; ringIndex < ringCount; ringIndex++)
+            {
+                float distanceFromMuzzle = weaponWorldLength * (BarrelFirstRingDistance + ringIndex * BarrelRingSpacing);
+                Vector3 ringPosition = muzzleWorld + barrelDirection * distanceFromMuzzle;
+
+                anchorBuffer.Add(new RingAnchor
+                {
+                    position = ringPosition,
+                    angle = barrelAngle + 90f,
+                    diameter = diameter,
+                    backAltitude = muzzleWorld.y - WeaponAltitudeOffset,
+                    frontAltitude = muzzleWorld.y + WeaponAltitudeOffset,
+                    swapHalves = record.flipped,
+                    intensity = 1f
+                });
+            }
+        }
+
         private void AddTorsoAnchors(Pawn pawn, int ringCount, int maximumRings)
         {
             Vector3 torsoCenter = pawn.DrawPos;
+
+            // Sized from the actual body when possible, otherwise from fixed values scaled by body size.
+            float diameter;
+            float lowestOffset;
+            float highestOffset;
+            if (TryGetBodyShape(pawn, out BodyShapeAnalyzer.BodyShape bodyShape))
+            {
+                float bodyDrawSize = HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn);
+                diameter = bodyShape.torsoWidth * bodyDrawSize * TorsoRingGapFactor;
+                lowestOffset = Mathf.Lerp(bodyShape.bottom, bodyShape.top, TorsoRingLowestShare) * bodyDrawSize;
+                highestOffset = Mathf.Lerp(bodyShape.bottom, bodyShape.top, TorsoRingHighestShare) * bodyDrawSize;
+            }
+            else
+            {
+                float sizeFactor = Mathf.Sqrt(pawn.BodySize);
+                diameter = TorsoRingDiameter * sizeFactor;
+                lowestOffset = TorsoLowestOffset * sizeFactor;
+                highestOffset = TorsoHighestOffset * sizeFactor;
+            }
+
             for (int ringIndex = 0; ringIndex < ringCount; ringIndex++)
             {
                 float heightFraction = maximumRings <= 1 ? 0.5f : (float)ringIndex / (maximumRings - 1);
-                float heightOffset = Mathf.Lerp(TorsoLowestOffset, TorsoHighestOffset, heightFraction);
+                float heightOffset = Mathf.Lerp(lowestOffset, highestOffset, heightFraction);
 
                 anchorBuffer.Add(new RingAnchor
                 {
                     position = torsoCenter + new Vector3(0f, 0f, heightOffset),
                     angle = 90f,
-                    diameter = TorsoRingDiameter,
+                    diameter = diameter,
                     backAltitude = torsoCenter.y - TorsoAltitudeOffset,
                     frontAltitude = torsoCenter.y + TorsoAltitudeOffset,
-                    swapHalves = false
+                    swapHalves = false,
+                    intensity = TorsoRingIntensity
                 });
             }
         }
@@ -341,7 +429,7 @@ namespace ShinAndMang
 
             ringComponent.anchorBuffer.Clear();
             int maximumRings = Mathf.Max(ringNumber, MangMechanics.MaximumRings(pawn));
-            if (!ringComponent.TryAddWeaponAnchors(pawn, ringNumber, maximumRings)) ringComponent.AddTorsoAnchors(pawn, ringNumber, maximumRings);
+            if (!ringComponent.TryAddWeaponAnchors(pawn, ringNumber, maximumRings, out _)) ringComponent.AddTorsoAnchors(pawn, ringNumber, maximumRings);
 
             ringComponent.ghostRings.Add(new GhostRing
             {
@@ -410,6 +498,24 @@ namespace ShinAndMang
             float easedProgress = 1f - (1f - shatterProgress) * (1f - shatterProgress);
             float separation = easedProgress * anchor.diameter * ShatterDistance;
             MangRingRenderer.DrawRing(anchor.position, anchor.angle, anchor.diameter, anchor.backAltitude, anchor.frontAltitude, anchor.swapHalves, 0f, 1f - shatterProgress, separation);
+            return true;
+        }
+
+        /// <summary>
+        /// The body texture's shape for the pawn's current facing. False for pawns without a body type (animals, mechs).
+        /// </summary>
+        private static bool TryGetBodyShape(Pawn pawn, out BodyShapeAnalyzer.BodyShape bodyShape)
+        {
+            bodyShape = null;
+            string bodyPath = pawn.story?.bodyType?.bodyNakedGraphicPath;
+            if (bodyPath.NullOrEmpty()) return false;
+
+            // Body textures have one image per facing; west uses the east image, mirrored.
+            string facingSuffix = pawn.Rotation == Rot4.North ? "_north" : pawn.Rotation == Rot4.South ? "_south" : "_east";
+            Texture2D bodyTexture = ContentFinder<Texture2D>.Get(bodyPath + facingSuffix, false);
+            if (bodyTexture == null) return false;
+
+            bodyShape = BodyShapeAnalyzer.GetShape(bodyTexture);
             return true;
         }
 
