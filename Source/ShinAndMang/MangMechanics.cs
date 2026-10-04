@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
+using System.Runtime.CompilerServices;
 using static RimWorld.PsychicRitualRoleDef;
+using static ShinAndMang.MapComponent_MangRings;
 
 namespace ShinAndMang
 {
@@ -25,13 +27,30 @@ namespace ShinAndMang
         /// </summary>
         public static int MaximumRings(Pawn pawn) => ShinMechanics.GetMastery(pawn)?.MasteryTier ?? 0;
 
+        /// <summary>
+        /// True if this attack can carry Mang (望) rings: melee strikes, and weapons that launch projectiles.
+        /// Beam weapons and other special attacks can't.
+        /// </summary>
+        public static bool CanUseMang(Verb verb) => verb is Verb_MeleeAttack || (verb is Verb_LaunchProjectile && verb.EquipmentSource != null);
+
         private class ActiveStrike
         {
             public int ringCount;
             public bool landed;
         }
 
+        private class PendingMangShot
+        {
+            public int ringCount;
+            public float range;
+        }
+
+
         private static readonly Dictionary<Pawn, ActiveStrike> activeStrikes = new Dictionary<Pawn, ActiveStrike>();
+
+        private static readonly Dictionary<Pawn, PendingMangShot> pendingMangShots = new Dictionary<Pawn, PendingMangShot>();
+
+        private static readonly ConditionalWeakTable<Projectile, StrongBox<float>> empoweredProjectiles = new ConditionalWeakTable<Projectile, StrongBox<float>>();
 
         /// <summary>
         /// Mood cost of forming ring number "ringNumber" (1 to 7).
@@ -72,6 +91,7 @@ namespace ShinAndMang
 
             if (ShinMechanics.GetMastery(pawn) == null) { reason = "ShinAndMang_NoShin".Translate(); return false; }
             if (pawn.Dead || pawn.Downed) { reason = "ShinAndMang_Incapacitated".Translate(); return false; }
+            if (pawn.Faction != null && pawn.Faction.IsPlayer && !pawn.Drafted) { reason = "ShinAndMang_NotInCombat".Translate(); return false; }
             if (pawn.WorkTagIsDisabled(WorkTags.Violent)) { reason = "ShinAndMang_IncapableOfViolence".Translate(); return false; }
 
             int maximumRings = MaximumRings(pawn);
@@ -170,14 +190,15 @@ namespace ShinAndMang
         //Offense
 
         /// <summary>
-        /// Removes the pawn's rings and returns how many there were (0 if none).
+        /// Removes the pawn's rings, ending them the given way, and returns how many there were (0 if none).
         /// </summary>
-        public static int ConsumeRings(Pawn pawn)
+        public static int ConsumeRings(Pawn pawn, MangRingEnding? ending = null)
         {
             Hediff_Mang rings = GetRings(pawn);
             if (rings == null) return 0;
 
             int ringCount = rings.RingCount;
+            rings.removalEnding = ending;
             pawn.health.RemoveHediff(rings);
             return ringCount;
         }
@@ -206,6 +227,44 @@ namespace ShinAndMang
         public static void MarkStrikeLanded(Pawn pawn)
         {
             if (activeStrikes.TryGetValue(pawn, out ActiveStrike strike)) strike.landed = true;
+        }
+
+        /// <summary>
+        /// The shooter's next launched projectile carries these rings.
+        /// </summary>
+        public static void SetPendingMangShot(Pawn shooter, int ringCount, float range) => pendingMangShots[shooter] = new PendingMangShot { ringCount = ringCount, range = range };
+
+        /// <summary>
+        /// Takes (and removes) a pending Mang (望) shot for this launcher, if there is one.
+        /// </summary>
+        public static bool TryTakePendingMangShot(Thing launcher, out int ringCount, out float range)
+        {
+            ringCount = 0;
+            range = 0f;
+            if (!(launcher is Pawn shooter) || !pendingMangShots.TryGetValue(shooter, out PendingMangShot pendingShot)) return false;
+
+            pendingMangShots.Remove(shooter);
+            ringCount = pendingShot.ringCount;
+            range = pendingShot.range;
+            return true;
+        }
+
+        public static void ClearPendingMangShot(Pawn shooter) => pendingMangShots.Remove(shooter);
+
+        /// <summary>
+        /// Remembers that this projectile's damage is multiplied. Forgotten automatically once the projectile is gone.
+        /// </summary>
+        public static void EmpowerProjectile(Projectile projectile, float damageMultiplier)
+        {
+            empoweredProjectiles.Remove(projectile);
+            empoweredProjectiles.Add(projectile, new StrongBox<float>(damageMultiplier));
+        }
+
+        public static bool TryGetProjectileEmpowerment(Projectile projectile, out float damageMultiplier)
+        {
+            bool isEmpowered = empoweredProjectiles.TryGetValue(projectile, out StrongBox<float> storedMultiplier);
+            damageMultiplier = isEmpowered ? storedMultiplier.Value : 1f;
+            return isEmpowered;
         }
 
         /// <summary>

@@ -15,8 +15,10 @@ namespace ShinAndMang
     [HarmonyPatch(typeof(PawnRenderUtility), nameof(PawnRenderUtility.DrawEquipmentAiming))]
     public static class Patch_PawnRenderUtility_DrawEquipmentAiming
     {
-        public static void Postfix(Thing eq, Vector3 drawLoc, float aimAngle)
+        public static void Postfix(Thing eq, Vector3 drawLoc, float aimAngle, bool __runOriginal)
         {
+            if (!__runOriginal) return;
+
             if (!(eq?.ParentHolder is Pawn_EquipmentTracker equipmentTracker) || equipmentTracker.pawn == null) return;
 
             // Same angle and mirroring math as vanilla's DrawEquipmentAiming.

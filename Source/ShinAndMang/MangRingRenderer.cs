@@ -28,6 +28,8 @@ namespace ShinAndMang
         private static readonly MaterialPropertyBlock ColorBlock = new MaterialPropertyBlock();
         private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
 
+        private static readonly Material BeamMaterial = MaterialPool.MatFrom("VFX/MangRailBeam", ShaderDatabase.MoteGlow, Color.white);
+
         static MangRingRenderer()
         {
             // These textures touch their left edge, so wrapping would bleed them onto the right edge as hairlines.
@@ -44,6 +46,26 @@ namespace ShinAndMang
         {
             Color ringColor = Color.Lerp(DimGold, BrightGold, brightness) * intensity;
             DrawHalves(RingMaterial, EllipseHeightShare, position, angle, diameter, backAltitude, frontAltitude, swapHalves, ringColor, halfSeparation);
+        }
+
+        // Rail
+
+        /// <summary>
+        /// Draws the rail shot's beam from start to end. "width" is in world units; "intensity" fades it.
+        /// </summary>
+        public static void DrawBeam(Vector3 start, Vector3 end, float width, float altitude, float intensity)
+        {
+            Vector3 startToEnd = end - start;
+            startToEnd.y = 0f;
+            float length = startToEnd.magnitude;
+            if (length <= 0.01f || intensity <= 0f) return;
+
+            Vector3 center = (start + end) / 2f;
+            float angle = Mathf.Atan2(startToEnd.x, startToEnd.z) * Mathf.Rad2Deg;
+
+            ColorBlock.SetColor(ColorPropertyId, BrightGold * intensity);
+            Matrix4x4 matrix = Matrix4x4.TRS(new Vector3(center.x, altitude, center.z), Quaternion.AngleAxis(angle, Vector3.up), new Vector3(width, 1f, length));
+            Graphics.DrawMesh(MeshPool.plane10, matrix, BeamMaterial, 0, null, 0, ColorBlock);
         }
 
         /// <summary>

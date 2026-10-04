@@ -103,8 +103,8 @@ namespace ShinAndMang
                 };
                 yield return new Command_Action
                 {
-                    defaultLabel = "DEV: Form Mang ring",
-                    action = () => MangMechanics.TryFormRing(parent.pawn)
+                    defaultLabel = "DEV: Obliterate Mang ring",
+                    action = () => MangMechanics.ConsumeRings(parent.pawn, MangRingEnding.Flare)
                 };
                 yield return new Command_Action
                 {

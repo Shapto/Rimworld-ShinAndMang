@@ -70,7 +70,10 @@ namespace ShinAndMang
         {
             if (!autoFormMang || !pawn.Spawned) return;
 
-            bool isWindingUp = pawn.stances?.curStance is Stance_Warmup || (pawn.stances?.curStance is Stance_Cooldown cooldownStance && cooldownStance.verb is Verb_MeleeAttack);
+            // Only weapon attacks build rings: aiming a weapon, or recovering between melee swings.
+            bool isAimingWeapon = pawn.stances?.curStance is Stance_Warmup warmup && warmup.verb?.EquipmentSource != null && MangMechanics.CanUseMang(warmup.verb);
+            bool isBetweenSwings = pawn.stances?.curStance is Stance_Cooldown cooldownStance && cooldownStance.verb is Verb_MeleeAttack;
+            bool isWindingUp = isAimingWeapon || isBetweenSwings;
             if (!isWindingUp)
             {
                 ticksUntilNextAutoRing = AutoTicksPerRing;
