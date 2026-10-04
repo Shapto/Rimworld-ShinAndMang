@@ -27,6 +27,12 @@ namespace ShinAndMang
         /// </summary>
         public static int MaximumRings(Pawn pawn) => ShinMechanics.GetMastery(pawn)?.MasteryTier ?? 0;
 
+        /// <summary>
+        /// True if this attack can carry Mang (望) rings: melee strikes, and weapons that launch projectiles.
+        /// Beam weapons and other special attacks can't.
+        /// </summary>
+        public static bool CanUseMang(Verb verb) => verb is Verb_MeleeAttack || (verb is Verb_LaunchProjectile && verb.EquipmentSource != null);
+
         private class ActiveStrike
         {
             public int ringCount;

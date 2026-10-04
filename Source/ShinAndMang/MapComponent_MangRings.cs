@@ -247,8 +247,11 @@ namespace ShinAndMang
             if (!WeaponDrawRecord.TryGetCurrent(pawn, out WeaponDrawRecord record) || record.weaponDef == null) return false;
 
             WeaponShape shape = WeaponShapeAnalyzer.GetShape(record.weaponDef);
-            // Weapons with a gun use the barrel, except while the pawn is fighting in melee (bayonets, gunlances and the like).
-            if (record.weaponDef.IsRangedWeapon && !IsFightingInMelee(pawn))
+            // Ranged weapons put the rings in front of the barrel, unless the pawn is fighting in melee,
+            // or the weapon's ranged attack can't carry rings (a beam weapon): then the rings wrap the weapon's body, for a bash.
+            Verb primaryVerb = pawn.equipment?.PrimaryEq?.PrimaryVerb;
+            bool barrelCanCarryRings = primaryVerb == null || MangMechanics.CanUseMang(primaryVerb);
+            if (record.weaponDef.IsRangedWeapon && barrelCanCarryRings && !IsFightingInMelee(pawn))
             {
                 weaponMode = RingMode.Barrel;
                 AddBarrelAnchors(record, shape, ringCount);
