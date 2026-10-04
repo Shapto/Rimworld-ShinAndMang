@@ -17,21 +17,21 @@ namespace ShinAndMang
         private const float DefaultDamageFalloff = 0.75f;
         private const int DefaultMaximumWallsPierced = 3;
 
-        public static void Fire(Pawn shooter, Verb_LaunchProjectile verb, LocalTargetInfo target, int ringCount)
+        public static void Fire(Pawn shooter, Projectile projectile, LocalTargetInfo target, int ringCount, float range)
         {
             Map map = shooter.Map;
-            ThingDef projectileDef = verb.GetProjectile();
-            if (map == null || projectileDef?.projectile == null) return;
+            if (map == null || projectile.def.projectile == null) return;
 
             MangSettings settings = ShinDefOf.Mang_Rings.GetModExtension<MangSettings>();
             float damageFalloff = settings?.railDamageFalloff ?? DefaultDamageFalloff;
             int maximumWallsPierced = settings?.maximumWallsPierced ?? DefaultMaximumWallsPierced;
 
-            // The gun's own projectile decides damage type, amount and armor penetration.
-            Thing weapon = verb.EquipmentSource;
-            DamageDef damageDef = projectileDef.projectile.damageDef;
-            float damage = projectileDef.projectile.GetDamageAmount(weapon) * MangMechanics.DamageMultiplier(ringCount);
-            float armorPenetration = projectileDef.projectile.GetArmorPenetration(weapon);
+            // The launched projectile decides damage type, amount and armor penetration,
+            // including anything the weapon's quality or another mod changed about it.
+            Thing weapon = shooter.equipment?.Primary;
+            DamageDef damageDef = projectile.def.projectile.damageDef;
+            float damage = projectile.DamageAmount * MangMechanics.DamageMultiplier(ringCount);
+            float armorPenetration = projectile.ArmorPenetration;
 
             // One pawn per ring (the target, plus one more pierced per extra ring), one wall per two rings.
             int pawnsAllowed = ringCount;
@@ -40,7 +40,7 @@ namespace ShinAndMang
             // The line: from the shooter, through the target's center, out to the weapon's range.
             Vector3 origin = shooter.DrawPos;
             Vector3 direction = (target.CenterVector3 - origin).Yto0().normalized;
-            IntVec3 endCell = (origin + direction * verb.verbProps.range).ToIntVec3();
+            IntVec3 endCell = (origin + direction * range).ToIntVec3();
             float hitAngle = direction.AngleFlat();
 
             int pawnsHit = 0;

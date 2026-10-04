@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,9 +25,20 @@ namespace ShinAndMang
                 .First();
         }
 
-        public static void Postfix(Projectile __instance, Thing launcher)
+        public static void Postfix(Projectile __instance, Thing launcher, LocalTargetInfo intendedTarget)
         {
-            if (MangMechanics.TryTakePendingEmpowerment(launcher, out float damageMultiplier)) MangMechanics.EmpowerProjectile(__instance, damageMultiplier);
+            if (!MangMechanics.TryTakePendingMangShot(launcher, out int ringCount, out float range)) return;
+
+            // Ordinary bullets become a rail shot, replacing the bullet; anything else flies on, empowered.
+            bool canBecomeRail = __instance is Bullet && __instance.def.projectile.explosionRadius <= 0f;
+            if (canBecomeRail && launcher is Pawn shooter)
+            {
+                MangRail.Fire(shooter, __instance, intendedTarget, ringCount, range);
+                __instance.Destroy();
+                return;
+            }
+
+            MangMechanics.EmpowerProjectile(__instance, MangMechanics.DamageMultiplier(ringCount));
         }
     }
 

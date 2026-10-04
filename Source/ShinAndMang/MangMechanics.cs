@@ -33,9 +33,16 @@ namespace ShinAndMang
             public bool landed;
         }
 
+        private class PendingMangShot
+        {
+            public int ringCount;
+            public float range;
+        }
+
+
         private static readonly Dictionary<Pawn, ActiveStrike> activeStrikes = new Dictionary<Pawn, ActiveStrike>();
 
-        private static readonly Dictionary<Pawn, float> pendingProjectileEmpowerment = new Dictionary<Pawn, float>();
+        private static readonly Dictionary<Pawn, PendingMangShot> pendingMangShots = new Dictionary<Pawn, PendingMangShot>();
 
         private static readonly ConditionalWeakTable<Projectile, StrongBox<float>> empoweredProjectiles = new ConditionalWeakTable<Projectile, StrongBox<float>>();
 
@@ -216,22 +223,26 @@ namespace ShinAndMang
         }
 
         /// <summary>
-        /// The shooter's next launched projectile will have its damage multiplied.
+        /// The shooter's next launched projectile carries these rings.
         /// </summary>
-        public static void SetPendingEmpowerment(Pawn shooter, float damageMultiplier) => pendingProjectileEmpowerment[shooter] = damageMultiplier;
+        public static void SetPendingMangShot(Pawn shooter, int ringCount, float range) => pendingMangShots[shooter] = new PendingMangShot { ringCount = ringCount, range = range };
 
         /// <summary>
-        /// Takes (and removes) a pending empowerment for this launcher, if there is one.
+        /// Takes (and removes) a pending Mang (望) shot for this launcher, if there is one.
         /// </summary>
-        public static bool TryTakePendingEmpowerment(Thing launcher, out float damageMultiplier)
+        public static bool TryTakePendingMangShot(Thing launcher, out int ringCount, out float range)
         {
-            damageMultiplier = 1f;
-            if (!(launcher is Pawn shooter) || !pendingProjectileEmpowerment.TryGetValue(shooter, out damageMultiplier)) return false;
-            pendingProjectileEmpowerment.Remove(shooter);
+            ringCount = 0;
+            range = 0f;
+            if (!(launcher is Pawn shooter) || !pendingMangShots.TryGetValue(shooter, out PendingMangShot pendingShot)) return false;
+
+            pendingMangShots.Remove(shooter);
+            ringCount = pendingShot.ringCount;
+            range = pendingShot.range;
             return true;
         }
 
-        public static void ClearPendingEmpowerment(Pawn shooter) => pendingProjectileEmpowerment.Remove(shooter);
+        public static void ClearPendingMangShot(Pawn shooter) => pendingMangShots.Remove(shooter);
 
         /// <summary>
         /// Remembers that this projectile's damage is multiplied. Forgotten automatically once the projectile is gone.
