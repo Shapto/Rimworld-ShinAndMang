@@ -33,8 +33,7 @@ namespace ShinAndMang
             bool canBecomeRail = __instance is Bullet && __instance.def.projectile.explosionRadius <= 0f;
             if (canBecomeRail && launcher is Pawn shooter)
             {
-                MangRail.Fire(shooter, __instance, intendedTarget, ringCount, range);
-                __instance.Destroy();
+                MangRail.QueueFire(shooter, __instance, intendedTarget, ringCount, range);
                 return;
             }
 

@@ -12,8 +12,21 @@
 						<clipPath>Mang/RingForm</clipPath>
 					</li>
 				</grains>
-				<volumeRange>90~100</volumeRange>
+				<volumeRange>50~60</volumeRange>
 				<pitchRange>0.97~1.03</pitchRange>
+				<paramMappings>
+					<li>
+						<inParam Class="SoundParamSource_CameraAltitude" />
+						<outParam Class="SoundParamTarget_Volume" />
+						<curve>
+						<points>
+							<li>(15, 1)</li>
+							<li>(40, 0.4)</li>
+							<li>(65, 0)</li>
+						</points>
+						</curve>
+					</li>
+				</paramMappings>
 			</li>
 		</subSounds>
 	</SoundDef>
@@ -29,7 +42,20 @@
 						<clipPath>Mang/RingFormComplete</clipPath>
 					</li>
 				</grains>
-				<volumeRange>100~100</volumeRange>
+				<volumeRange>60~60</volumeRange>
+				<paramMappings>
+					<li>
+						<inParam Class="SoundParamSource_CameraAltitude" />
+						<outParam Class="SoundParamTarget_Volume" />
+						<curve>
+						<points>
+							<li>(15, 1)</li>
+							<li>(40, 0.4)</li>
+							<li>(65, 0)</li>
+						</points>
+						</curve>
+					</li>
+				</paramMappings>
 			</li>
 		</subSounds>
 	</SoundDef>

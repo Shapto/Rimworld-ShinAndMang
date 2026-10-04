@@ -17,6 +17,14 @@ namespace ShinAndMang
         public HediffCompProperties_ShinActivation() => compClass = typeof(HediffComp_ShinActivation);
     }
 
+    [StaticConstructorOnStartup]
+    public static class ShinAndMangTextures
+    {
+        public static readonly Texture2D FormMangIcon = ContentFinder<Texture2D>.Get("Icons/FormMang");
+        public static readonly Texture2D AutoMangIcon = ContentFinder<Texture2D>.Get("Icons/AutoMang");
+        public static readonly Texture2D MangCountSettingIcon = ContentFinder<Texture2D>.Get("Icons/MangCountSetting");
+    }
+
     public class HediffComp_ShinActivation : HediffComp
     {
         private static Texture2D cachedIcon;
@@ -66,14 +74,15 @@ namespace ShinAndMang
                     maximumRings = maximumRings,
                     defaultLabel = "ShinAndMang_MangTargetLabel".Translate(shownTarget, MangMechanics.SafeRingCount(pawn)),
                     defaultDesc = "ShinAndMang_MangTargetDescription".Translate(),
-                    icon = Icon };
+                    icon = ShinAndMangTextures.MangCountSettingIcon
+                };
 
                 // Form Mang (望): starts the preparation job.
                 var formMang = new Command_Action
                 {
                     defaultLabel = "ShinAndMang_FormMangLabel".Translate(),
                     defaultDesc = "ShinAndMang_FormMangDescription".Translate(),
-                    icon = Icon,
+                    icon = ShinAndMangTextures.FormMangIcon,
                     action = () => pawn.jobs.TryTakeOrderedJob(JobMaker.MakeJob(ShinDefOf.FormMang), JobTag.Misc)
                 };
 
@@ -81,7 +90,7 @@ namespace ShinAndMang
                 {
                     defaultLabel = "ShinAndMang_AutoMangLabel".Translate(),
                     defaultDesc = "ShinAndMang_AutoMangDescription".Translate(),
-                    icon = Icon,
+                    icon = ShinAndMangTextures.AutoMangIcon,
                     isActive = () => mastery.autoFormMang,
                     toggleAction = () => mastery.autoFormMang = !mastery.autoFormMang
                 };
@@ -90,33 +99,6 @@ namespace ShinAndMang
             }
 
             yield return shinToggle;
-
-            if (DebugSettings.godMode)
-            {
-                yield return new Command_Action
-                {
-                    defaultLabel = "DEV: Shin Mastery +10%",
-                    action = () =>
-                    {
-                        ShinMechanics.GainMastery(parent.pawn, 0.1f);
-                    }
-                };
-                yield return new Command_Action
-                {
-                    defaultLabel = "DEV: Obliterate Mang ring",
-                    action = () => MangMechanics.ConsumeRings(parent.pawn, MangRingEnding.Flare)
-                };
-                yield return new Command_Action
-                {
-                    defaultLabel = "DEV: Weapon shape",
-                    action = () =>
-                    {
-                        ThingDef weaponDef = parent.pawn.equipment?.Primary?.def;
-                        if (weaponDef == null) return;
-                        WeaponShape shape = WeaponShapeAnalyzer.GetShape(weaponDef);
-                    }
-                };
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,21 +18,67 @@ namespace ShinAndMang
         private const float DefaultDamageFalloff = 0.75f;
         private const int DefaultMaximumWallsPierced = 3;
 
-        public static void Fire(Pawn shooter, Projectile projectile, LocalTargetInfo target, int ringCount, float range)
+        private class QueuedRail
+        {
+            public Pawn shooter;
+            public Projectile replacedProjectile;   // removed when the rail fires, after the shot (and other mods' patches) finished with it
+            public LocalTargetInfo target;
+            public int ringCount;
+            public float range;
+            public DamageDef damageDef;
+            public float baseDamage;
+            public float armorPenetration;
+        }
+
+        private static readonly List<QueuedRail> queuedRails = new List<QueuedRail>();
+
+        /// <summary>
+        /// Prepares a rail shot from a launched projectile, to be fired on the next tick, once the firing code has finished.
+        /// Firing instantly inside the shot could kill the target while other code still expects it.
+        /// </summary>
+        public static void QueueFire(Pawn shooter, Projectile projectile, LocalTargetInfo target, int ringCount, float range)
+        {
+            queuedRails.Add(new QueuedRail
+            {
+                shooter = shooter,
+                replacedProjectile = projectile,
+                target = target,
+                ringCount = ringCount,
+                range = range,
+                damageDef = projectile.def.projectile.damageDef,
+                baseDamage = projectile.DamageAmount,
+                armorPenetration = projectile.ArmorPenetration
+            });
+        }
+
+        /// <summary>
+        /// Fires every queued rail. Called once per tick.
+        /// </summary>
+        public static void FireQueuedRails()
+        {
+            if (queuedRails.Count == 0) return;
+
+            var railsToFire = new List<QueuedRail>(queuedRails);
+            queuedRails.Clear();
+            foreach (QueuedRail rail in railsToFire)
+            {
+                if (rail.replacedProjectile != null && !rail.replacedProjectile.Destroyed) rail.replacedProjectile.Destroy();
+
+                if (rail.shooter == null || !rail.shooter.Spawned || rail.shooter.Dead) continue;
+                Fire(rail.shooter, rail.target, rail.ringCount, rail.range, rail.damageDef, rail.baseDamage, rail.armorPenetration);
+            }
+        }
+        public static void Fire(Pawn shooter, LocalTargetInfo target, int ringCount, float range, DamageDef damageDef, float baseDamage, float armorPenetration)
         {
             Map map = shooter.Map;
-            if (map == null || projectile.def.projectile == null) return;
+            if (map == null || damageDef == null) return;
 
             MangSettings settings = ShinDefOf.Mang_Rings.GetModExtension<MangSettings>();
             float damageFalloff = settings?.railDamageFalloff ?? DefaultDamageFalloff;
             int maximumWallsPierced = settings?.maximumWallsPierced ?? DefaultMaximumWallsPierced;
 
-            // The launched projectile decides damage type, amount and armor penetration,
-            // including anything the weapon's quality or another mod changed about it.
             Thing weapon = shooter.equipment?.Primary;
-            DamageDef damageDef = projectile.def.projectile.damageDef;
-            float damage = projectile.DamageAmount * MangMechanics.DamageMultiplier(ringCount);
-            float armorPenetration = projectile.ArmorPenetration;
+            float damage = baseDamage * MangMechanics.DamageMultiplier(ringCount);
 
             // One pawn per ring (the target, plus one more pierced per extra ring), one wall per two rings.
             int pawnsAllowed = ringCount;

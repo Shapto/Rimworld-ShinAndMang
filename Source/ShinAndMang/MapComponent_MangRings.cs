@@ -394,6 +394,7 @@ namespace ShinAndMang
 
         public override void MapComponentTick()
         {
+            MangRail.FireQueuedRails();
             int currentTick = Find.TickManager.TicksGame;
             foreach (KeyValuePair<Pawn, PawnRingState> pawnAndState in statesByPawn)
             {
