@@ -24,6 +24,9 @@ namespace ShinAndMang
             Pawn shooter = __instance.CasterPawn;
             if (shooter == null || !shooter.Spawned) return;
 
+            // Only weapons: abilities that shoot projectiles don't use Mang (望).
+            if (__instance.EquipmentSource == null) return;
+
             // Only the first shot of a burst.
             if (BurstShotsLeft(__instance) != __instance.BurstShotCount) return;
 

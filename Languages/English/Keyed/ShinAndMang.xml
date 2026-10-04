@@ -2,6 +2,7 @@
 <LanguageData>
   <ShinAndMang_ShinGizmoLabel>Shin (心)</ShinAndMang_ShinGizmoLabel>
   <ShinAndMang_SettingAllowTeaching>Allow teaching Shin (心) through conversation</ShinAndMang_SettingAllowTeaching>
+  <ShinAndMang_SettingForgetAttackAbilities>Forget learned attack abilities ({0})</ShinAndMang_SettingForgetAttackAbilities>
   <ShinAndMang_ShinGizmoDescription>Manifest Shin (心); strengthen the body, clear the mind.\n\nCosts {0} mood. Active only while drafted.</ShinAndMang_ShinGizmoDescription>
   <ShinAndMang_ShinFades>{0}'s Shin (心) fades.</ShinAndMang_ShinFades>
   <ShinAndMang_NoShin>Doesn't know Shin (心).</ShinAndMang_NoShin>

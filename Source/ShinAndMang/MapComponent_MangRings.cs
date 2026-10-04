@@ -69,7 +69,7 @@ namespace ShinAndMang
         private const int ShatterSparkCount = 6;
         private const float FlareOutSeconds = 0.3f;
 
-        private enum RingMode { Weapon, Barrel, Torso }
+        private enum RingMode { Weapon, Barrel, Torso}
 
         private struct RingAnchor
         {

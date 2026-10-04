@@ -85,6 +85,7 @@ namespace ShinAndMang
 
             if (ShinMechanics.GetMastery(pawn) == null) { reason = "ShinAndMang_NoShin".Translate(); return false; }
             if (pawn.Dead || pawn.Downed) { reason = "ShinAndMang_Incapacitated".Translate(); return false; }
+            if (pawn.Faction != null && pawn.Faction.IsPlayer && !pawn.Drafted) { reason = "ShinAndMang_NotInCombat".Translate(); return false; }
             if (pawn.WorkTagIsDisabled(WorkTags.Violent)) { reason = "ShinAndMang_IncapableOfViolence".Translate(); return false; }
 
             int maximumRings = MaximumRings(pawn);
