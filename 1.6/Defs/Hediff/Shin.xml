@@ -3,7 +3,7 @@
 
 	<HediffDef Name="ShinBase" Abstract="True">
 		<hediffClass>ShinAndMang.Hediff_Shin</hediffClass>
-		<description>A golden aura of Shin (心) envelops this person. Emptying themselves and letting their heaviest feelings and memories flood in, they have turned their heart into strength. The more they have mastered Shin (心), the greater the change.\n\nWhile it burns, Shin (心) holds back the worst of their emotional burden, though it returns once the fight is over. It fades when they stand down or fall.\n\nEvery user's Shin (心) takes a personal form, shaped by who they are.</description>
+		<description>A golden aura burns around this person, a projection of their heart as strength. .\n\nWhile it burns, they clear their mind and overpower their single worst thought. It will burn until they are felled or stand down.\n\nShin (心) reflects the shape of the user's own heart, and no one instance is the same.</description>
 		<defaultLabelColor>(1, 0.82, 0.35)</defaultLabelColor>
 		<isBad>false</isBad>
 		<everCurableByItem>false</everCurableByItem>
