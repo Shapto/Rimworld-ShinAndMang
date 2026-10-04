@@ -4,7 +4,7 @@
 	<HediffDef>
 		<defName>Mang_Rings</defName>
 		<label>Mang (望)</label>
-		<description>Terrible memories plucked from this person's bag of recollections, shaped into rings that wrap and weigh their hand.</description>
+		<description>The heaviest memories plucked from this person's bag of recollections, shaped into rings that wrap around and weigh their hand; A lone bullet to pierce the heart, a single strike to cleave plate.</description>
 		<hediffClass>ShinAndMang.Hediff_Mang</hediffClass>
 		<defaultLabelColor>(1, 0.82, 0.35)</defaultLabelColor>
 		<isBad>false</isBad>
