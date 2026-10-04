@@ -3,7 +3,7 @@
 
 	<HediffDef Name="ShinBase" Abstract="True">
 		<hediffClass>ShinAndMang.Hediff_Shin</hediffClass>
-		<description>A golden aura burns around this person, a projection of their heart as strength. .\n\nWhile it burns, they clear their mind and overpower their single worst thought. It will burn until they are felled or stand down.\n\nShin (心) reflects the shape of the user's own heart, and no one instance is the same.</description>
+		<description>A golden aura burns around this person, a projection of their heart as strength.\n\nWhile it burns, they clear their mind and overpower their single worst thought. It will burn until they are felled or stand down.\n\nShin (心) reflects the shape of the user's own heart, and no one instance is the same.</description>
 		<defaultLabelColor>(1, 0.82, 0.35)</defaultLabelColor>
 		<isBad>false</isBad>
 		<everCurableByItem>false</everCurableByItem>
