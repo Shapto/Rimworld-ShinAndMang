@@ -4,7 +4,7 @@
 	<HediffDef>
 		<defName>Shin_Mastery</defName>
 		<label>Shin (心) Mastery</label>
-		<description>This person knows Shin (心), a technique that draws power from the heart. Greater mastery means greater control over one's inner self.</description>
+		<description>This person possesses greater control over their spirit through Shin (心), a technique that allows them to project their heart as strength. With greater mastery comes even greater control over one's inner self</description>
 		<hediffClass>ShinAndMang.Hediff_ShinMastery</hediffClass>
 		<defaultLabelColor>(1, 0.82, 0.35)</defaultLabelColor>
 		<isBad>false</isBad>
