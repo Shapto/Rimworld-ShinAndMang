@@ -25,6 +25,11 @@ namespace ShinAndMang
         private const float BarrelRingWidthFactor = 3f;        // ring diameter relative to the barrel's width
         private const float BarrelRingMinimumSize = 0.18f;     // ring diameter at least this, relative to the weapon's length
 
+        // Rail
+        private const float RailStreakSeconds = 0.35f;
+        private const float RailStreakWidth = 0.35f;
+        private const int RailImpactSparkCount = 5;
+
         // Torso
         private const float TorsoRingDiameter = 0.8f;
         private const float TorsoLowestOffset = -0.3f;
@@ -62,6 +67,7 @@ namespace ShinAndMang
         private const float ShatterDistance = 0.6f;          // how far the halves fly apart, relative to the ring's diameter
         private const float FizzleFormSeconds = 0.35f;       // how long a failing ring flickers before it breaks
         private const int ShatterSparkCount = 6;
+        private const float FlareOutSeconds = 0.3f;
 
         private enum RingMode { Weapon, Barrel, Torso }
 
@@ -87,28 +93,32 @@ namespace ShinAndMang
             public List<float> ringAges = new List<float>();
         }
 
-        private enum RingEnding { FadeOut, Shatter, Fizzle }
-
-
         private class GhostRing
         {
             public Pawn pawn;
             public RingAnchor anchor;
             public Vector3 pawnPositionAtStart;
-            public RingEnding ending;
+            public MangRingEnding ending;
             public int ringIndex;
             public float age;
             public bool hasBurst;
         }
 
         private readonly List<GhostRing> ghostRings = new List<GhostRing>();
-
+        private readonly List<RailStreak> railStreaks = new List<RailStreak>();
         private readonly Dictionary<Pawn, PawnRingState> statesByPawn = new Dictionary<Pawn, PawnRingState>();
         private readonly List<RingAnchor> anchorBuffer = new List<RingAnchor>();
         private readonly List<Pawn> pawnsToForget = new List<Pawn>();
 
         public MapComponent_MangRings(Map map) : base(map)
         {
+        }
+
+        private class RailStreak
+        {
+            public Vector3 start;
+            public Vector3 end;
+            public float age;
         }
 
         /// <summary>
@@ -207,6 +217,24 @@ namespace ShinAndMang
                 ghost.age += deltaTime;
                 if (!DrawGhost(ghost, deltaTime > 0f)) ghostRings.RemoveAt(ghostIndex);
             }
+            // Rail shots: a beam that snaps on, then thins and fades.
+            float beamAltitude = AltitudeLayer.MoteOverhead.AltitudeFor();
+            for (int streakIndex = railStreaks.Count - 1; streakIndex >= 0; streakIndex--)
+            {
+                RailStreak streak = railStreaks[streakIndex];
+                streak.age += deltaTime;
+
+                float streakProgress = streak.age / RailStreakSeconds;
+                if (streakProgress >= 1f)
+                {
+                    railStreaks.RemoveAt(streakIndex);
+                    continue;
+                }
+
+                float remaining = 1f - streakProgress;
+                MangRingRenderer.DrawBeam(streak.start, streak.end, RailStreakWidth * remaining, beamAltitude, remaining);
+            }
+
             ForgetPawnsWithoutRings();
         }
 
@@ -400,7 +428,7 @@ namespace ShinAndMang
         /// <summary>
         /// The pawn's rings were removed: they shatter on collapse, otherwise fade out.
         /// </summary>
-        public static void NotifyRingsEnded(Pawn pawn, bool shatter)
+        public static void NotifyRingsEnded(Pawn pawn, MangRingEnding ending)
         {
             MapComponent_MangRings ringComponent = pawn.MapHeld?.GetComponent<MapComponent_MangRings>();
             if (ringComponent == null || !ringComponent.statesByPawn.TryGetValue(pawn, out PawnRingState state)) return;
@@ -412,11 +440,33 @@ namespace ShinAndMang
                     pawn = pawn,
                     anchor = state.lastShown[ringIndex],
                     pawnPositionAtStart = state.pawnPosition,
-                    ending = shatter ? RingEnding.Shatter : RingEnding.FadeOut,
+                    ending = ending,
                     ringIndex = ringIndex
                 });
             }
             ringComponent.statesByPawn.Remove(pawn);
+        }
+
+        /// <summary>
+        /// A rail shot was fired: draws its streak and throws sparks at each impact.
+        /// </summary>
+        public static void NotifyRailFired(Map map, Vector3 start, Vector3 end, List<Vector3> impactPoints)
+        {
+            MapComponent_MangRings ringComponent = map?.GetComponent<MapComponent_MangRings>();
+            if (ringComponent == null) return;
+
+            ringComponent.railStreaks.Add(new RailStreak { start = start, end = end });
+
+            // Sparks spray forward along the shot from everything it hit.
+            Vector3 shotDirection = end - start;
+            float shotAngle = Mathf.Atan2(shotDirection.x, shotDirection.z) * Mathf.Rad2Deg;
+            foreach (Vector3 impactPoint in impactPoints)
+            {
+                for (int sparkIndex = 0; sparkIndex < RailImpactSparkCount; sparkIndex++)
+                {
+                    ShinVisuals.ThrowSparkAt(ShinDefOf.Fleck_MangSpark, map, impactPoint, shotAngle + Rand.Range(-35f, 35f), Rand.Range(SparkMinimumSpeed, SparkMaximumSpeed * 1.5f));
+                }
+            }
         }
 
         /// <summary>
@@ -436,7 +486,7 @@ namespace ShinAndMang
                 pawn = pawn,
                 anchor = ringComponent.anchorBuffer[ringNumber - 1],
                 pawnPositionAtStart = pawn.DrawPos,
-                ending = RingEnding.Fizzle,
+                ending = MangRingEnding.Fizzle,
                 ringIndex = ringNumber - 1
             });
         }
@@ -453,7 +503,7 @@ namespace ShinAndMang
 
             switch (ghost.ending)
             {
-                case RingEnding.FadeOut:
+                case MangRingEnding.FadeOut:
                     {
                         float fadeProgress = ghost.age / FadeOutSeconds;
                         if (fadeProgress >= 1f) return false;
@@ -461,10 +511,23 @@ namespace ShinAndMang
                         return true;
                     }
 
-                case RingEnding.Shatter:
+                case MangRingEnding.Shatter:
                     return DrawShatter(ghost, anchor, ghost.age, gameRunning);
 
-                case RingEnding.Fizzle:
+                case MangRingEnding.Flare:
+                    {
+                        // Fired: the ring bursts into its flare one last time, brightening as it vanishes.
+                        float flareOutProgress = ghost.age / FlareOutSeconds;
+                        if (flareOutProgress >= 1f) return false;
+
+                        float easedProgress = 1f - (1f - flareOutProgress) * (1f - flareOutProgress);
+                        float fade = 1f - flareOutProgress;
+                        MangRingRenderer.DrawFlare(anchor.position, anchor.angle, anchor.diameter, Mathf.Lerp(FlareStartScale, FlareEndScale, easedProgress), anchor.backAltitude, anchor.frontAltitude, anchor.swapHalves, fade * anchor.intensity);
+                        MangRingRenderer.DrawRing(anchor.position, anchor.angle, anchor.diameter, anchor.backAltitude, anchor.frontAltitude, anchor.swapHalves, 1f, fade * anchor.intensity);
+                        return true;
+                    }
+
+                case MangRingEnding.Fizzle:
                     {
                         // First it flickers into place, unstable...
                         if (ghost.age < FizzleFormSeconds)

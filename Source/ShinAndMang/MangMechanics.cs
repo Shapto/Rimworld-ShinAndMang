@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
+using System.Runtime.CompilerServices;
 using static RimWorld.PsychicRitualRoleDef;
+using static ShinAndMang.MapComponent_MangRings;
 
 namespace ShinAndMang
 {
@@ -32,6 +34,10 @@ namespace ShinAndMang
         }
 
         private static readonly Dictionary<Pawn, ActiveStrike> activeStrikes = new Dictionary<Pawn, ActiveStrike>();
+
+        private static readonly Dictionary<Pawn, float> pendingProjectileEmpowerment = new Dictionary<Pawn, float>();
+
+        private static readonly ConditionalWeakTable<Projectile, StrongBox<float>> empoweredProjectiles = new ConditionalWeakTable<Projectile, StrongBox<float>>();
 
         /// <summary>
         /// Mood cost of forming ring number "ringNumber" (1 to 7).
@@ -170,14 +176,15 @@ namespace ShinAndMang
         //Offense
 
         /// <summary>
-        /// Removes the pawn's rings and returns how many there were (0 if none).
+        /// Removes the pawn's rings, ending them the given way, and returns how many there were (0 if none).
         /// </summary>
-        public static int ConsumeRings(Pawn pawn)
+        public static int ConsumeRings(Pawn pawn, MangRingEnding? ending = null)
         {
             Hediff_Mang rings = GetRings(pawn);
             if (rings == null) return 0;
 
             int ringCount = rings.RingCount;
+            rings.removalEnding = ending;
             pawn.health.RemoveHediff(rings);
             return ringCount;
         }
@@ -206,6 +213,40 @@ namespace ShinAndMang
         public static void MarkStrikeLanded(Pawn pawn)
         {
             if (activeStrikes.TryGetValue(pawn, out ActiveStrike strike)) strike.landed = true;
+        }
+
+        /// <summary>
+        /// The shooter's next launched projectile will have its damage multiplied.
+        /// </summary>
+        public static void SetPendingEmpowerment(Pawn shooter, float damageMultiplier) => pendingProjectileEmpowerment[shooter] = damageMultiplier;
+
+        /// <summary>
+        /// Takes (and removes) a pending empowerment for this launcher, if there is one.
+        /// </summary>
+        public static bool TryTakePendingEmpowerment(Thing launcher, out float damageMultiplier)
+        {
+            damageMultiplier = 1f;
+            if (!(launcher is Pawn shooter) || !pendingProjectileEmpowerment.TryGetValue(shooter, out damageMultiplier)) return false;
+            pendingProjectileEmpowerment.Remove(shooter);
+            return true;
+        }
+
+        public static void ClearPendingEmpowerment(Pawn shooter) => pendingProjectileEmpowerment.Remove(shooter);
+
+        /// <summary>
+        /// Remembers that this projectile's damage is multiplied. Forgotten automatically once the projectile is gone.
+        /// </summary>
+        public static void EmpowerProjectile(Projectile projectile, float damageMultiplier)
+        {
+            empoweredProjectiles.Remove(projectile);
+            empoweredProjectiles.Add(projectile, new StrongBox<float>(damageMultiplier));
+        }
+
+        public static bool TryGetProjectileEmpowerment(Projectile projectile, out float damageMultiplier)
+        {
+            bool isEmpowered = empoweredProjectiles.TryGetValue(projectile, out StrongBox<float> storedMultiplier);
+            damageMultiplier = isEmpowered ? storedMultiplier.Value : 1f;
+            return isEmpowered;
         }
 
         /// <summary>

@@ -17,5 +17,7 @@
 </modDependencies>
 <loadAfter>
   <li>brrainz.harmony</li>
+  <li>astryl.flourish</li>
+  <li>co.uk.epicguru.meleeanimation</li>
 </loadAfter>
 </ModMetaData>

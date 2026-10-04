@@ -18,6 +18,10 @@ namespace ShinAndMang
         // Damage
         public float damageMultiplierPerRing = 1.35f;  // used when an attack consumes the rings
 
+        // Rail shot
+        public float railDamageFalloff = 0.75f;   // damage kept after each thing pierced
+        public int maximumWallsPierced = 3;
+
         // Lifetime
         public int fadeTicks = 1500;                   // 25 seconds
 

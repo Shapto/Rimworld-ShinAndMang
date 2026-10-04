@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using static ShinAndMang.MapComponent_MangRings;
 
 namespace ShinAndMang
 {
@@ -28,6 +29,11 @@ namespace ShinAndMang
             ticksUntilFade = Settings?.fadeTicks ?? 1500;
         }
 
+        /// <summary>
+        /// Set just before the rings are removed, to choose how they end. Null means "decide from the holder's state."
+        /// </summary>
+        public MangRingEnding? removalEnding;
+
         // Lifecycle
 
         public override void PostTick()
@@ -39,7 +45,8 @@ namespace ShinAndMang
         public override void PostRemoved()
         {
             base.PostRemoved();
-            MapComponent_MangRings.NotifyRingsEnded(pawn, pawn.Downed || pawn.Dead);
+            MangRingEnding ending = removalEnding ?? (pawn.Downed || pawn.Dead ? MangRingEnding.Shatter : MangRingEnding.FadeOut);
+            MapComponent_MangRings.NotifyRingsEnded(pawn, ending);
         }
 
         public override void PostAdd(DamageInfo? dinfo)
