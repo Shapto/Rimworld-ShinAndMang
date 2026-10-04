@@ -7,7 +7,7 @@
 		<symbol>Things/Mote/SpeechSymbols/DeepTalk</symbol>
 		<logRulesInitiator>
 			<rulesStrings>
-				<li>r_logentry->[INITIATOR_nameDef] shared some tips about Shin (心) with [RECIPIENT_nameDef].</li>
+				<li>r_logentry->[INITIATOR_nameDef] shared their knowlege of Shin (心) with [RECIPIENT_nameDef].</li>
 			</rulesStrings>
 		</logRulesInitiator>
 	</InteractionDef>
