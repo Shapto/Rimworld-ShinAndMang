@@ -16,6 +16,9 @@ namespace ShinAndMang
         public Vector2 forward;
         public List<Vector2> spinePoints = new List<Vector2>();   // blade center line across the zone, back to front
         public List<float> spineWidths = new List<float>();       // weapon width at each spine point
+        public Vector2 muzzlePoint;   // the barrel's tip, on its center line (ranged weapons)
+        public float muzzleWidth;     // barrel width at the muzzle
+        public float length;          // the weapon's length along forward, in sprite units
 
         /// <summary>
         /// Where ring number "ringIndex" (0 = first formed, at the back of the zone) of "ringCount" sits,

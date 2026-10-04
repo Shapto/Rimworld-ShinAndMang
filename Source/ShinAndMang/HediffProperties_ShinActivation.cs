@@ -76,6 +76,15 @@ namespace ShinAndMang
                     icon = Icon,
                     action = () => pawn.jobs.TryTakeOrderedJob(JobMaker.MakeJob(ShinDefOf.FormMang), JobTag.Misc)
                 };
+
+                yield return new Command_Toggle
+                {
+                    defaultLabel = "ShinAndMang_AutoMangLabel".Translate(),
+                    defaultDesc = "ShinAndMang_AutoMangDescription".Translate(),
+                    icon = Icon,
+                    isActive = () => mastery.autoFormMang,
+                    toggleAction = () => mastery.autoFormMang = !mastery.autoFormMang
+                };
                 if (!MangMechanics.CanFormRing(pawn, out string formMangReason)) formMang.Disable(formMangReason);
                 yield return formMang;
             }

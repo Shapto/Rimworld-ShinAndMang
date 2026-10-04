@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BodyShapeAnalyzer.cs" />
     <Compile Include="Command_MangTarget.cs" />
     <Compile Include="CompUseEffect_GainShin.cs" />
     <Compile Include="Dihui Star.cs" />

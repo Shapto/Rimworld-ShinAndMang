@@ -8,7 +8,7 @@ using Verse;
 
 namespace ShinAndMang
 {
-    // <summary>
+    /// <summary>
     /// Where a pawn's weapon was drawn this frame. Filled by the vanilla drawing patch,
     /// and later by animation mod patches, so the rings always follow the weapon as it's actually shown.
     /// </summary>

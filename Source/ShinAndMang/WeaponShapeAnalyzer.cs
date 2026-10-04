@@ -25,6 +25,7 @@ namespace ShinAndMang
         private const float ZoneBackPosition = 0.35f;
         private const int SpineSampleCount = 16;
         private const float TaperWidthFactor = 0.6f;   // narrower than this times the typical width counts as the tapering point
+        private const float MuzzleSlicePosition = 0.95f;   // where the barrel's width and center line are measured
 
         private static readonly Dictionary<ThingDef, WeaponShape> cachedShapes = new Dictionary<ThingDef, WeaponShape>();
 
@@ -86,6 +87,20 @@ namespace ShinAndMang
             if (sampledWidths.Count == 0) return shape;
             sampledWidths.Sort();
             float typicalWidth = sampledWidths[sampledWidths.Count / 2];
+
+            // Muzzle: the weapon's tip, on the center line measured just behind it.
+            shape.length = weaponLength;
+            float muzzleSliceAlong = minimumAlong + weaponLength * MuzzleSlicePosition;
+            if (TryMeasureSlice(pixels, textureWidth, textureHeight, forward, perpendicular, muzzleSliceAlong, out float muzzleWidth, out float muzzleSide))
+            {
+                shape.muzzlePoint = forward * maximumAlong + perpendicular * muzzleSide;
+                shape.muzzleWidth = muzzleWidth;
+            }
+            else
+            {
+                shape.muzzlePoint = forward * maximumAlong;
+                shape.muzzleWidth = typicalWidth;
+            }
 
             // Front of the zone: stepped back toward the handle while inside a bulky head or a tapering point.
             float zoneFront = ZoneFrontPosition;
@@ -247,7 +262,7 @@ namespace ShinAndMang
         /// <summary>
         /// Textures on the graphics card can't be read directly, so this copies one into a readable form.
         /// </summary>
-        private static Color[] ReadPixels(Texture2D source)
+        internal static Color[] ReadPixels(Texture2D source)
         {
             RenderTexture temporaryTexture = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.ARGB32);
             Graphics.Blit(source, temporaryTexture);
