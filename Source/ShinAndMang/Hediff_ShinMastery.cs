@@ -140,6 +140,7 @@ namespace ShinAndMang
                 variant = ShinMechanics.RollVariant();
 
             Scribe_Values.Look(ref autoFormMang, "autoFormMang", true);
+            Scribe_Values.Look(ref mangTargetRings, "mangTargetRings", 7);
         }
 
     }

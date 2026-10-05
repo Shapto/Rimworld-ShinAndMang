@@ -47,13 +47,6 @@ namespace ShinAndMang
             if (pawn.Spawned) ShinDefOf.Shin_Add.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
         }
 
-        public override void PostRemoved()
-        {
-            base.PostRemoved();
-            if (pawn.Spawned && pawn.Faction == Faction.OfPlayer)
-                Messages.Message("ShinAndMang_ShinFades".Translate(pawn.LabelShort), pawn, MessageTypeDefOf.NeutralEvent, historical: false);
-        }
-
         public override int CurStageIndex
         {
             get
