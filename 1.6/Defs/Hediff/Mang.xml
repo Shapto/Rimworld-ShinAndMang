@@ -10,7 +10,7 @@
 		<isBad>false</isBad>
 		<everCurableByItem>false</everCurableByItem>
 		<initialSeverity>1</initialSeverity>
-		<maxSeverity>7</maxSeverity>
+		<maxSeverity>500</maxSeverity>
 		<modExtensions>
 			<li Class="ShinAndMang.MangSettings">
 				<baseCostByMastery>

@@ -21,10 +21,17 @@ namespace ShinAndMang
 
         public override string SettingsCategory() => "Shin (心) and Mang (望)";
 
+        private static Vector2 settingsScrollPosition;
+        private static float settingsContentHeight = 1000f;
+
         public override void DoSettingsWindowContents(Rect inRect)
         {
+            var viewRect = new Rect(0f, 0f, inRect.width - 20f, settingsContentHeight);
+            Widgets.BeginScrollView(inRect, ref settingsScrollPosition, viewRect);
+
+            // Much taller than the settings will ever be, so the listing never wraps into a second column.
             var listing = new Listing_Standard();
-            listing.Begin(inRect);
+            listing.Begin(new Rect(0f, 0f, viewRect.width, 99999f));
 
             listing.Label("Mastery gain speed: x" + Settings.masteryGainMultiplier.ToString("0.00"));
             Settings.masteryGainMultiplier = listing.Slider(Settings.masteryGainMultiplier, 0.25f, 4f);
@@ -45,6 +52,9 @@ namespace ShinAndMang
             ArmorSlider(listing, "ShinAndMang_SettingSovereignBluntArmor".Translate(), ref Settings.sovereignBluntArmor);
             ArmorSlider(listing, "ShinAndMang_SettingNoviceHeatArmor".Translate(), ref Settings.noviceHeatArmor);
             ArmorSlider(listing, "ShinAndMang_SettingSovereignHeatArmor".Translate(), ref Settings.sovereignHeatArmor);
+            GUI.color = ColorLibrary.RedReadable;
+            listing.Label("ShinAndMang_SettingMaximumMangRingsWarning".Translate());
+            GUI.color = Color.white;
             listing.Label("ShinAndMang_SettingMaximumMangRings".Translate(Settings.maximumMangRings));
             Settings.maximumMangRings = Mathf.RoundToInt(listing.Slider(Settings.maximumMangRings, 1f, 500f));
             if (Settings.maximumMangRings > 7)
@@ -55,6 +65,8 @@ namespace ShinAndMang
                 if (listing.RadioButton("ShinAndMang_ExtraRingCost_Free".Translate(), Settings.ringsPastSeventhCost == ExtraMangRingCost.Free)) Settings.ringsPastSeventhCost = ExtraMangRingCost.Free;
             }
             listing.End();
+            settingsContentHeight = listing.CurHeight;
+            Widgets.EndScrollView();
         }
 
         /// <summary>
