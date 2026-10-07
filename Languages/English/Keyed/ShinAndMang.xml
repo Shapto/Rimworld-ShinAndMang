@@ -64,5 +64,5 @@
   <ShinAndMang_ExtraRingCost_KeepDoubling>Keep doubling in cost</ShinAndMang_ExtraRingCost_KeepDoubling>
   <ShinAndMang_ExtraRingCost_SameAsSeventh>Cost the same as the seventh</ShinAndMang_ExtraRingCost_SameAsSeventh>
   <ShinAndMang_ExtraRingCost_Free>Cost no mood</ShinAndMang_ExtraRingCost_Free>
-  <ShinAndMang_SettingMaximumMangRingsWarning>DANGEROUS! More than seven Mang (望) rings can lower performance and crash your game.</ShinAndMang_SettingMaximumMangRingsWarning>
+  <ShinAndMang_SettingMaximumMangRingsWarning>DANGEROUS! More than seven Mang (望) rings breaks balance, and hundreds can heavily lower performance</ShinAndMang_SettingMaximumMangRingsWarning>
 </LanguageData>
