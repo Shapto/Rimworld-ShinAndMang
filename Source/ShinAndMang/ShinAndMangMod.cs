@@ -45,6 +45,15 @@ namespace ShinAndMang
             ArmorSlider(listing, "ShinAndMang_SettingSovereignBluntArmor".Translate(), ref Settings.sovereignBluntArmor);
             ArmorSlider(listing, "ShinAndMang_SettingNoviceHeatArmor".Translate(), ref Settings.noviceHeatArmor);
             ArmorSlider(listing, "ShinAndMang_SettingSovereignHeatArmor".Translate(), ref Settings.sovereignHeatArmor);
+            listing.Label("ShinAndMang_SettingMaximumMangRings".Translate(Settings.maximumMangRings));
+            Settings.maximumMangRings = Mathf.RoundToInt(listing.Slider(Settings.maximumMangRings, 1f, 500f));
+            if (Settings.maximumMangRings > 7)
+            {
+                listing.Label("ShinAndMang_SettingExtraRingCost".Translate());
+                if (listing.RadioButton("ShinAndMang_ExtraRingCost_KeepDoubling".Translate(), Settings.ringsPastSeventhCost == ExtraMangRingCost.KeepDoubling)) Settings.ringsPastSeventhCost = ExtraMangRingCost.KeepDoubling;
+                if (listing.RadioButton("ShinAndMang_ExtraRingCost_SameAsSeventh".Translate(), Settings.ringsPastSeventhCost == ExtraMangRingCost.SameAsSeventh)) Settings.ringsPastSeventhCost = ExtraMangRingCost.SameAsSeventh;
+                if (listing.RadioButton("ShinAndMang_ExtraRingCost_Free".Translate(), Settings.ringsPastSeventhCost == ExtraMangRingCost.Free)) Settings.ringsPastSeventhCost = ExtraMangRingCost.Free;
+            }
             listing.End();
         }
 

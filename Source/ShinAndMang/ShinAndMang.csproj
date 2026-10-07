@@ -68,6 +68,7 @@
     <Compile Include="CompUseEffect_GainShin.cs" />
     <Compile Include="Dihui Star.cs" />
     <Compile Include="Disgrace.cs" />
+    <Compile Include="GameComponent_WeaponDrawCleanup.cs" />
     <Compile Include="Graphic_FlickerSized.cs" />
     <Compile Include="HediffProperties_ShinActivation.cs" />
     <Compile Include="Hediff_Mang.cs" />

@@ -78,7 +78,7 @@ namespace ShinAndMang
             int maximumWallsPierced = settings?.maximumWallsPierced ?? DefaultMaximumWallsPierced;
 
             Thing weapon = shooter.equipment?.Primary;
-            float damage = baseDamage * MangMechanics.DamageMultiplier(ringCount);
+            float damage = MangMechanics.MultipliedDamage(baseDamage, ringCount);
 
             // One pawn per ring (the target, plus one more pierced per extra ring), one wall per two rings.
             int pawnsAllowed = ringCount;

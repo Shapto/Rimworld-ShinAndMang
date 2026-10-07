@@ -59,4 +59,9 @@
   <ShinAndMang_FormMangDescription>Stand still and form Mang (望) rings one after another, up to {0} rings. Each ring costs mood: forming up to the target costs {1}, more if a ring fizzles. Rings beyond the safe amount can push the user into a mental break. Being hurt interrupts the formation, and formed rings fade if not used.</ShinAndMang_FormMangDescription>
   <ShinAndMang_AutoMangLabel>Auto Mang (望)</ShinAndMang_AutoMangLabel>
   <ShinAndMang_AutoMangDescription>Form Mang (望) rings automatically while winding up an attack: while aiming, or between melee swings. Rings form up to the ring setting, but never past the safe amount, so the user won't be pushed into a mental break.</ShinAndMang_AutoMangDescription>
+  <ShinAndMang_SettingMaximumMangRings>Maximum Mang (望) rings: {0}</ShinAndMang_SettingMaximumMangRings>
+  <ShinAndMang_SettingExtraRingCost>Mang (望) rings past the seventh (Sovereigns only):</ShinAndMang_SettingExtraRingCost>
+  <ShinAndMang_ExtraRingCost_KeepDoubling>Keep doubling in cost</ShinAndMang_ExtraRingCost_KeepDoubling>
+  <ShinAndMang_ExtraRingCost_SameAsSeventh>Cost the same as the seventh</ShinAndMang_ExtraRingCost_SameAsSeventh>
+  <ShinAndMang_ExtraRingCost_Free>Cost no mood</ShinAndMang_ExtraRingCost_Free>
 </LanguageData>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Verse;
 
 namespace ShinAndMang
@@ -49,7 +50,7 @@ namespace ShinAndMang
     {
         public static void Postfix(Projectile __instance, ref int __result)
         {
-            if (MangMechanics.TryGetProjectileEmpowerment(__instance, out float damageMultiplier)) __result = UnityEngine.Mathf.RoundToInt(__result * damageMultiplier);
+            if (MangMechanics.TryGetProjectileEmpowerment(__instance, out float damageMultiplier)) __result = Mathf.RoundToInt(Mathf.Min(__result * damageMultiplier, MangMechanics.MaximumSafeDamage));
         }
     }
 }

@@ -23,9 +23,15 @@ namespace ShinAndMang
         public static int CurrentRings(Pawn pawn) => GetRings(pawn)?.RingCount ?? 0;
 
         /// <summary>
-        /// Most rings the pawn can hold: their mastery rank.
+        /// How many rings the pawn can hold: one per mastery rank, capped by the setting.
+        /// Every ring past the seventh unlocks at 100% mastery, so a Sovereign gets the setting's full value.
         /// </summary>
-        public static int MaximumRings(Pawn pawn) => ShinMechanics.GetMastery(pawn)?.MasteryTier ?? 0;
+        public static int MaximumRings(Pawn pawn)
+        {
+            int masteryTier = ShinMechanics.GetMastery(pawn)?.MasteryTier ?? 0;
+            int ringSetting = ShinAndMangMod.Settings.maximumMangRings;
+            return masteryTier >= 7 ? ringSetting : Mathf.Min(masteryTier, ringSetting);
+        }
 
         /// <summary>
         /// True if this attack can carry Mang (望) rings: melee strikes, and weapons that launch projectiles.
@@ -53,15 +59,24 @@ namespace ShinAndMang
         private static readonly ConditionalWeakTable<Projectile, StrongBox<float>> empoweredProjectiles = new ConditionalWeakTable<Projectile, StrongBox<float>>();
 
         /// <summary>
-        /// Mood cost of forming ring number "ringNumber" (1 to 7).
+        /// Mood cost of forming ring number "ringNumber".
         /// </summary>
         public static float RingCost(Pawn pawn, int ringNumber)
         {
             MangSettings settings = ShinDefOf.Mang_Rings.GetModExtension<MangSettings>();
             Hediff_ShinMastery mastery = ShinMechanics.GetMastery(pawn);
             if (settings?.baseCostByMastery == null || mastery == null) return float.MaxValue;
+
+            int doublings = ringNumber - 1;
+            if (ringNumber > 7)
+            {
+                ExtraMangRingCost extraRingCost = ShinAndMangMod.Settings.ringsPastSeventhCost;
+                if (extraRingCost == ExtraMangRingCost.Free) return 0f;
+                if (extraRingCost == ExtraMangRingCost.SameAsSeventh) doublings = 6;
+            }
+
             float baseCost = settings.baseCostByMastery.Evaluate(mastery.Severity);
-            return baseCost * Mathf.Pow(2f, ringNumber - 1);
+            return baseCost * Mathf.Pow(2f, doublings);
         }
 
         /// <summary>
@@ -204,12 +219,26 @@ namespace ShinAndMang
         }
 
         /// <summary>
+        /// The largest damage a single Mang (望) hit can deal. Higher would overflow RimWorld's damage math (negative or NaN damage).
+        /// </summary>
+        public const float MaximumSafeDamage = 1000000000f;
+
+        /// <summary>
         /// Damage multiplier for an attack carrying this many rings: the per-ring multiplier to the power of the ring count.
         /// </summary>
         public static float DamageMultiplier(int ringCount)
         {
             float multiplierPerRing = ShinDefOf.Mang_Rings.GetModExtension<MangSettings>()?.damageMultiplierPerRing ?? 1.35f;
             return Mathf.Pow(multiplierPerRing, ringCount);
+        }
+
+        /// <summary>
+        /// Base damage with the rings' multiplier applied, clamped to a safe maximum.
+        /// </summary>
+        public static float MultipliedDamage(float baseDamage, int ringCount)
+        {
+            if (baseDamage <= 0f) return baseDamage;
+            return Mathf.Min(baseDamage * DamageMultiplier(ringCount), MaximumSafeDamage);
         }
 
         public static void BeginStrike(Pawn pawn, int ringCount) => activeStrikes[pawn] = new ActiveStrike { ringCount = ringCount };

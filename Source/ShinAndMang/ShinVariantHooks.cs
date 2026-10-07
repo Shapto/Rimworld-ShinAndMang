@@ -63,7 +63,7 @@ namespace ShinAndMang
                 // Mang (望): an attack carrying rings deals multiplied damage.
                 if (dinfo.Instigator is Pawn strikingPawn && MangMechanics.TryGetActiveStrike(strikingPawn, out int strikeRings))
                 {
-                    dinfo.SetAmount(dinfo.Amount * MangMechanics.DamageMultiplier(strikeRings));
+                    dinfo.SetAmount(MangMechanics.MultipliedDamage(dinfo.Amount, strikeRings));
                     MangMechanics.MarkStrikeLanded(strikingPawn);
                 }
 

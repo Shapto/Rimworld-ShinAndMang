@@ -8,6 +8,16 @@ using Verse;
 namespace ShinAndMang
 {
     /// <summary>
+    /// What Mang (望) rings past the seventh cost.
+    /// </summary>
+    public enum ExtraMangRingCost
+    {
+        KeepDoubling,
+        SameAsSeventh,
+        Free
+    }
+
+    /// <summary>
     /// Values the player can change in the Mod Settings menu.
     /// </summary>
     public class ShinAndMangSettings : ModSettings
@@ -22,6 +32,8 @@ namespace ShinAndMang
         public float sovereignBluntArmor = 0.80f;
         public float noviceHeatArmor = 0.05f;
         public float sovereignHeatArmor = 0.30f;
+        public int maximumMangRings = 7;
+        public ExtraMangRingCost ringsPastSeventhCost = ExtraMangRingCost.SameAsSeventh;
         public override void ExposeData()
         {
             base.ExposeData();
@@ -35,6 +47,8 @@ namespace ShinAndMang
             Scribe_Values.Look(ref sovereignBluntArmor, "sovereignBluntArmor", 0.80f);
             Scribe_Values.Look(ref noviceHeatArmor, "noviceHeatArmor", 0.05f);
             Scribe_Values.Look(ref sovereignHeatArmor, "sovereignHeatArmor", 0.30f);
+            Scribe_Values.Look(ref maximumMangRings, "maximumMangRings", 7);
+            Scribe_Values.Look(ref ringsPastSeventhCost, "ringsPastSeventhCost", ExtraMangRingCost.SameAsSeventh);
         }
     }
 }
