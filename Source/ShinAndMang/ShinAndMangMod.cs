@@ -43,6 +43,11 @@ namespace ShinAndMang
                 Settings.shinSpawnChance = listing.Slider(Settings.shinSpawnChance, 0f, 0.1f);
             }
             listing.GapLine();
+            listing.Label("Sound");
+            VolumeSlider(listing, "Master volume", ref Settings.masterVolume);
+            VolumeSlider(listing, "Shin (心) activation", ref Settings.shinActivationVolume);
+            VolumeSlider(listing, "Shin (心) aura loop", ref Settings.shinLoopVolume);
+            VolumeSlider(listing, "Mang (望) rings", ref Settings.mangRingsVolume);
             GUI.color = ColorLibrary.RedReadable;
             listing.Label("ShinAndMang_SettingRestartRequired".Translate());
             GUI.color = Color.white;
@@ -76,6 +81,15 @@ namespace ShinAndMang
         {
             listing.Label(label + ": " + value.ToStringPercent());
             value = Mathf.Round(listing.Slider(value, 0f, 2f) * 100f) / 100f;
+        }
+
+        /// <summary>
+        /// One labeled volume slider from 0% to 100%, rounded to whole percents.
+        /// </summary>
+        private static void VolumeSlider(Listing_Standard listing, string label, ref float value)
+        {
+            listing.Label(label + ": " + value.ToStringPercent());
+            value = Mathf.Round(listing.Slider(value, 0f, 1f) * 100f) / 100f;
         }
     }
 }

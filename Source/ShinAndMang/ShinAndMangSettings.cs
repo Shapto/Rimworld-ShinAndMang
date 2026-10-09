@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Verse;
+using Verse.Sound;
 
 namespace ShinAndMang
 {
@@ -15,6 +16,16 @@ namespace ShinAndMang
         KeepDoubling,
         SameAsSeventh,
         Free
+    }
+
+    /// <summary>
+    /// Which group of mod sounds a volume slider controls.
+    /// </summary>
+    public enum ShinAndMangSoundCategory
+    {
+        ShinActivation,
+        ShinLoop,
+        MangRings
     }
 
     /// <summary>
@@ -34,6 +45,10 @@ namespace ShinAndMang
         public float sovereignHeatArmor = 0.30f;
         public int maximumMangRings = 7;
         public ExtraMangRingCost ringsPastSeventhCost = ExtraMangRingCost.SameAsSeventh;
+        public float masterVolume = 1f;
+        public float shinActivationVolume = 1f;
+        public float shinLoopVolume = 1f;
+        public float mangRingsVolume = 1f;
         public override void ExposeData()
         {
             base.ExposeData();
@@ -49,6 +64,55 @@ namespace ShinAndMang
             Scribe_Values.Look(ref sovereignHeatArmor, "sovereignHeatArmor", 0.30f);
             Scribe_Values.Look(ref maximumMangRings, "maximumMangRings", 7);
             Scribe_Values.Look(ref ringsPastSeventhCost, "ringsPastSeventhCost", ExtraMangRingCost.SameAsSeventh);
+            Scribe_Values.Look(ref masterVolume, "masterVolume", 1f);
+            Scribe_Values.Look(ref shinActivationVolume, "shinActivationVolume", 1f);
+            Scribe_Values.Look(ref shinLoopVolume, "shinLoopVolume", 1f);
+            Scribe_Values.Look(ref mangRingsVolume, "mangRingsVolume", 1f);
+        }
+
+        /// <summary>
+        /// Returns master volume multiplied by the category's own volume.
+        /// </summary>
+        public float GetEffectiveVolume(ShinAndMangSoundCategory soundCategory)
+        {
+            float categoryVolume = 1f;
+            switch (soundCategory)
+            {
+                case ShinAndMangSoundCategory.ShinActivation:
+                    categoryVolume = shinActivationVolume;
+                    break;
+                case ShinAndMangSoundCategory.ShinLoop:
+                    categoryVolume = shinLoopVolume;
+                    break;
+                case ShinAndMangSoundCategory.MangRings:
+                    categoryVolume = mangRingsVolume;
+                    break;
+            }
+            return masterVolume * categoryVolume;
+        }
+
+        /// <summary>
+        /// Volume slider entry point.
+        /// </summary>
+        public static class ShinAndMangSoundPlayer
+        {
+            public static void PlayOneShot(SoundDef soundDef, TargetInfo target, ShinAndMangSoundCategory soundCategory)
+            {
+                if (soundDef == null) return;
+                float volume = ShinAndMangMod.Settings.GetEffectiveVolume(soundCategory);
+                if (volume <= 0f) return;
+                SoundInfo soundInfo = SoundInfo.InMap(target);
+                soundInfo.volumeFactor = volume;
+                soundDef.PlayOneShot(soundInfo);
+            }
+
+            public static Sustainer SpawnSustainer(SoundDef soundDef, TargetInfo target, ShinAndMangSoundCategory soundCategory)
+            {
+                if (soundDef == null) return null;
+                SoundInfo soundInfo = SoundInfo.InMap(target, MaintenanceType.PerTick);
+                soundInfo.volumeFactor = ShinAndMangMod.Settings.GetEffectiveVolume(soundCategory);
+                return soundDef.TrySpawnSustainer(soundInfo);
+            }
         }
     }
 }

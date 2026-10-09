@@ -7,6 +7,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 using Verse.Sound;
+using static ShinAndMang.ShinAndMangSettings;
 
 namespace ShinAndMang
 {
@@ -61,7 +62,7 @@ namespace ShinAndMang
             // Concluding sound, whenever the job ends (finished, interrupted or cancelled), if any ring formed.
             AddFinishAction(jobCondition =>
             {
-                if (ringsFormed > 0 && pawn.Spawned) ShinDefOf.Mang_RingFormComplete.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
+                if (ringsFormed > 0 && pawn.Spawned) ShinAndMangSoundPlayer.PlayOneShot(ShinDefOf.Mang_RingFormComplete, pawn, ShinAndMangSoundCategory.MangRings);
             });
             yield return formRings;
         }

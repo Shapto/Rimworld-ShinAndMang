@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
-using System.Runtime.CompilerServices;
 using static RimWorld.PsychicRitualRoleDef;
 using static ShinAndMang.MapComponent_MangRings;
+using static ShinAndMang.ShinAndMangSettings;
 
 namespace ShinAndMang
 {
@@ -165,7 +166,7 @@ namespace ShinAndMang
                 rings.Severity += 1f;
                 rings.Notify_RingAdded();
             }
-            if (pawn.Spawned) ShinDefOf.Mang_RingForm.PlayOneShot(new TargetInfo(pawn.Position, pawn.Map));
+            if (pawn.Spawned) ShinAndMangSoundPlayer.PlayOneShot(ShinDefOf.Mang_RingForm, pawn, ShinAndMangSoundCategory.MangRings);
             return true;
         }
 
