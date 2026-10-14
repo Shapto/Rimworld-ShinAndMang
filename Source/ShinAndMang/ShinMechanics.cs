@@ -103,13 +103,13 @@ namespace ShinAndMang
         }
 
         /// <summary>
-        /// Adults with a mood need who don't know Shin (心) yet.
+        /// Pawns past infancy with a mood need who don't know Shin (心) yet.
         /// </summary>
         public static bool CanLearnShin(Pawn pawn)
         {
             if (GetMastery(pawn) != null) return false;
             if (pawn.needs?.mood == null) return false;
-            if (!pawn.DevelopmentalStage.Adult()) return false;
+            if (pawn.DevelopmentalStage.Baby() || pawn.DevelopmentalStage.Newborn()) return false;
             if (pawn.WorkTagIsDisabled(WorkTags.Violent)) return false;
             return true;
         }

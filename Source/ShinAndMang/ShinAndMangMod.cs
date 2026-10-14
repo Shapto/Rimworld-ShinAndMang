@@ -36,7 +36,7 @@ namespace ShinAndMang
             listing.Label("Mastery gain speed: x" + Settings.masteryGainMultiplier.ToString("0.00"));
             Settings.masteryGainMultiplier = listing.Slider(Settings.masteryGainMultiplier, 0.25f, 4f);
             listing.CheckboxLabeled("ShinAndMang_SettingAllowTeaching".Translate(), ref Settings.allowTeachingThroughConversation);
-            listing.CheckboxLabeled("Everybody has Shin (心)", ref Settings.everybodyHasShin, "Every eligible adult is generated knowing Shin (心).");
+            listing.CheckboxLabeled("Everybody has Shin (心)", ref Settings.everybodyHasShin, "Every eligible pawn is generated knowing Shin (心).");
             if (!Settings.everybodyHasShin)
             {
                 listing.Label("Shin (心) spawn chance: " + Settings.shinSpawnChance.ToStringPercent());
