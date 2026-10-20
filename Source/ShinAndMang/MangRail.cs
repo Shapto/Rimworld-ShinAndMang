@@ -17,12 +17,12 @@ namespace ShinAndMang
     {
         private const float DefaultDamageFalloff = 0.75f;
         private const int DefaultMaximumWallsPierced = 3;
-
         private class QueuedRail
         {
             public Pawn shooter;
-            public Projectile replacedProjectile;   // removed when the rail fires, after the shot (and other mods' patches) finished with it
+            public Projectile replacedProjectile;
             public LocalTargetInfo target;
+            public IntVec3 traceStartCell;
             public int ringCount;
             public float range;
             public DamageDef damageDef;
@@ -43,6 +43,7 @@ namespace ShinAndMang
                 shooter = shooter,
                 replacedProjectile = projectile,
                 target = target,
+                traceStartCell = TraceStartCell(shooter, target),
                 ringCount = ringCount,
                 range = range,
                 damageDef = projectile.def.projectile.damageDef,
@@ -65,10 +66,10 @@ namespace ShinAndMang
                 if (rail.replacedProjectile != null && !rail.replacedProjectile.Destroyed) rail.replacedProjectile.Destroy();
 
                 if (rail.shooter == null || !rail.shooter.Spawned || rail.shooter.Dead) continue;
-                Fire(rail.shooter, rail.target, rail.ringCount, rail.range, rail.damageDef, rail.baseDamage, rail.armorPenetration);
+                Fire(rail.shooter, rail.target, rail.traceStartCell, rail.ringCount, rail.range, rail.damageDef, rail.baseDamage, rail.armorPenetration);
             }
         }
-        public static void Fire(Pawn shooter, LocalTargetInfo target, int ringCount, float range, DamageDef damageDef, float baseDamage, float armorPenetration)
+        public static void Fire(Pawn shooter, LocalTargetInfo target, IntVec3 traceStartCell, int ringCount, float range, DamageDef damageDef, float baseDamage, float armorPenetration)
         {
             Map map = shooter.Map;
             if (map == null || damageDef == null) return;
@@ -85,7 +86,7 @@ namespace ShinAndMang
             int wallsAllowed = Mathf.Min(maximumWallsPierced, ringCount / 2);
 
             // The line: from the shooter, through the target's center, out to the weapon's range.
-            Vector3 origin = shooter.DrawPos;
+            Vector3 origin = traceStartCell.ToVector3Shifted();
             Vector3 direction = (target.CenterVector3 - origin).Yto0().normalized;
             IntVec3 endCell = (origin + direction * range).ToIntVec3();
             float hitAngle = direction.AngleFlat();
@@ -99,13 +100,13 @@ namespace ShinAndMang
             var impactPoints = new List<Vector3>();
             Vector3 endPoint = endCell.ToVector3Shifted();
 
-            foreach (IntVec3 cell in GenSight.PointsOnLineOfSight(shooter.Position, endCell))
+            foreach (IntVec3 cell in GenSight.PointsOnLineOfSight(traceStartCell, endCell))
             {
                 if (!cell.InBounds(map)) break;
                 endPoint = cell.ToVector3Shifted();
                 // Walls: pierced up to the limit; the next one takes the hit and stops the shot.
                 Building wall = cell.GetEdifice(map);
-                if (wall != null && wall.def.Fillage == FillCategory.Full)
+                if (wall != null && !cell.CanBeSeenOver(map))
                 {
                     DealDamage(wall, damageDef, damage, armorPenetration, hitAngle, shooter, weapon);
                     if (wallsHit >= wallsAllowed) break;
@@ -143,6 +144,17 @@ namespace ShinAndMang
         {
             if (!WeaponDrawRecord.TryGetCurrent(shooter, out WeaponDrawRecord record) || record.weaponDef == null) return shooter.DrawPos;
             return record.SpritePointToWorld(WeaponShapeAnalyzer.GetShape(record.weaponDef).muzzlePoint);
+        }
+
+        /// <summary>
+        /// The cell vanilla would fire from: when the shooter is behind cover, that's the cell they lean out into.
+        /// Falls back to the shooter's own cell when no shoot line can be found.
+        /// </summary>
+        private static IntVec3 TraceStartCell(Pawn shooter, LocalTargetInfo target)
+        {
+            Verb verb = shooter.equipment?.PrimaryEq?.PrimaryVerb;
+            if (verb != null && verb.TryFindShootLineFromTo(shooter.Position, target, out ShootLine shootLine)) return shootLine.Source;
+            return shooter.Position;
         }
         private static void DealDamage(Thing target, DamageDef damageDef, float damage, float armorPenetration, float hitAngle, Pawn shooter, Thing weapon)
         {

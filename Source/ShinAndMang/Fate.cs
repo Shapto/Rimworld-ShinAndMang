@@ -27,7 +27,15 @@ namespace ShinAndMang
         /// <summary>
         /// 0 when unhurt, 1 once half of health is gone.
         /// </summary>
-        private float WoundProgress => Mathf.Clamp01((1f - ShinUser.health.summaryHealth.SummaryHealthPercent) / MissingHealthForFullEffect);
+        private float WoundProgress
+        {
+            get
+            {
+                float healthPercent = ShinUser.health.summaryHealth.SummaryHealthPercent;
+                if (float.IsNaN(healthPercent)) healthPercent = 1f;
+                return Mathf.Clamp01((1f - healthPercent) / MissingHealthForFullEffect);
+            }
+        }
 
         public float WoundDamageBonus => WoundProgress * MaximumWoundDamageBonus;
         public float PainShockThresholdBonus => WoundProgress * MaximumPainShockThresholdBonus;

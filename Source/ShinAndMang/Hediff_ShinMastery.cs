@@ -136,8 +136,10 @@ namespace ShinAndMang
             Scribe_Defs.Look(ref variant, "variant");
 
             // Variant's def was removed (e.g. its mod was uninstalled): reroll instead of breaking.
-            if (Scribe.mode == LoadSaveMode.PostLoadInit && variant == null)
-                variant = ShinMechanics.RollVariant();
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && variant == null) variant = ShinMechanics.RollVariant();
+
+            // Mastery corrupted to NaN by an older version: reset instead of staying broken.
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && float.IsNaN(Severity)) Severity = 0f;
 
             Scribe_Values.Look(ref autoFormMang, "autoFormMang", true);
             Scribe_Values.Look(ref mangTargetRings, "mangTargetRings", 7);

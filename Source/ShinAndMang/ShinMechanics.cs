@@ -76,7 +76,14 @@ namespace ShinAndMang
             ShinMasteryGainExtension gainSettings = mastery.def.GetModExtension<ShinMasteryGainExtension>();
 
             float multiplier = gainSettings?.gainCurve?.Evaluate(mastery.Severity) ?? 1f;
-            mastery.Severity = Mathf.Min(1f, mastery.Severity + baseAmount * multiplier);
+            float gain = baseAmount * multiplier;
+            if (float.IsNaN(gain) || float.IsInfinity(gain))
+            {
+                Log.ErrorOnce($"[Shin and Mang] Invalid mastery gain for {pawn.LabelShort} (base {baseAmount}, multiplier {multiplier}). Skipped.", pawn.thingIDNumber ^ 0x5A17);
+                return;
+            }
+            float currentSeverity = float.IsNaN(mastery.Severity) ? 0f : mastery.Severity;
+            mastery.Severity = Mathf.Clamp01(currentSeverity + gain);
 
             NotifyMasteryChanged(pawn);
         }
@@ -121,7 +128,9 @@ namespace ShinAndMang
         {
             float intensity = 1f;
             Need_Mood mood = pawn.needs?.mood;
-            intensity += (1f - pawn.health.summaryHealth.SummaryHealthPercent) * gainSettings.woundIntensityWeight;
+            float healthPercent = pawn.health.summaryHealth.SummaryHealthPercent;
+            if (float.IsNaN(healthPercent)) healthPercent = 1f;
+            intensity += (1f - healthPercent) * gainSettings.woundIntensityWeight;
             if (mood != null)
             {
                 intensity += (Mathf.Abs(mood.CurLevel - 0.5f) * 2f) * gainSettings.moodIntensityWeight;

@@ -34,7 +34,15 @@ namespace ShinAndMang
         public float AccuracyBonus => Mathf.Lerp(NoviceAccuracyBonus, SovereignAccuracyBonus, MasteryProgress);
         public float DodgeBonus => Mathf.Lerp(NoviceDodgeBonus, SovereignDodgeBonus, MasteryProgress);
 
-        public float WoundDamageBonus => Mathf.Clamp01((1f - ShinUser.health.summaryHealth.SummaryHealthPercent) / MissingHealthForFullEffect) * MaximumWoundDamageBonus;
+        public float WoundDamageBonus
+        {
+            get
+            {
+                float healthPercent = ShinUser.health.summaryHealth.SummaryHealthPercent;
+                if (float.IsNaN(healthPercent)) healthPercent = 1f;
+                return Mathf.Clamp01((1f - healthPercent) / MissingHealthForFullEffect) * MaximumWoundDamageBonus;
+            }
+        }
 
         // Damage
 
