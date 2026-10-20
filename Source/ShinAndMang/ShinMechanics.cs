@@ -75,14 +75,14 @@ namespace ShinAndMang
 
             ShinMasteryGainExtension gainSettings = mastery.def.GetModExtension<ShinMasteryGainExtension>();
 
-            float multiplier = gainSettings?.gainCurve?.Evaluate(mastery.Severity) ?? 1f;
+            float currentSeverity = float.IsNaN(mastery.Severity) ? 0f : mastery.Severity;
+            float multiplier = gainSettings?.gainCurve?.Evaluate(currentSeverity) ?? 1f;
             float gain = baseAmount * multiplier;
             if (float.IsNaN(gain) || float.IsInfinity(gain))
             {
                 Log.ErrorOnce($"[Shin and Mang] Invalid mastery gain for {pawn.LabelShort} (base {baseAmount}, multiplier {multiplier}). Skipped.", pawn.thingIDNumber ^ 0x5A17);
                 return;
             }
-            float currentSeverity = float.IsNaN(mastery.Severity) ? 0f : mastery.Severity;
             mastery.Severity = Mathf.Clamp01(currentSeverity + gain);
 
             NotifyMasteryChanged(pawn);
