@@ -21,6 +21,7 @@
   <ShinAndMang_Fate_Targeting>{0}: +{1} damage</ShinAndMang_Fate_Targeting>
   <ShinAndMang_Disgrace_Shame>shame {0}</ShinAndMang_Disgrace_Shame>
   <ShinAndMang_Disgrace_Effect>- Fire and burn damage dealt: +{0}.\n- Staggers caused by the user last {1}s longer.\n- Shame: {2}. Builds when struck, fades over time. Currently -{3} damage taken and +{4} move speed.</ShinAndMang_Disgrace_Effect>
+  <ShinAndMang_Disgrace_Targeting>{0}: +{1} fire and burn damage</ShinAndMang_Disgrace_Targeting>
   <ShinAndMang_Procuration_Effect>- Move speed +{0}, aiming speed +{1}.\n- Accuracy and melee hit chance +{2}, melee dodge chance +{3}.\n- Damage dealt: currently +{4}. Increases as health falls, up to +40% at half health or lower.</ShinAndMang_Procuration_Effect>
   <ShinAndMang_Procuration_Targeting>{0}: +{1} damage</ShinAndMang_Procuration_Targeting>
   <ShinAndMang_DihuiStar_Effect>- Move speed +{0}.\n- Damage taken from anyone the user is not currently fighting: -{1}.</ShinAndMang_DihuiStar_Effect>
@@ -65,4 +66,7 @@
   <ShinAndMang_ExtraRingCost_SameAsSeventh>Cost the same as the seventh</ShinAndMang_ExtraRingCost_SameAsSeventh>
   <ShinAndMang_ExtraRingCost_Free>Cost no mood</ShinAndMang_ExtraRingCost_Free>
   <ShinAndMang_SettingMaximumMangRingsWarning>DANGEROUS! More than seven Mang (望) rings breaks balance, and hundreds can heavily lower performance</ShinAndMang_SettingMaximumMangRingsWarning>
+  <ShinAndMang_SettingAllowChoosingVariantTooltip>When a colonist learns Shin (心) for the first time, choose their variant instead of getting a random one.</ShinAndMang_SettingAllowChoosingVariantTooltip>
+  <ShinAndMang_ChooseVariantTitle>Choose {0}'s Shin (心)</ShinAndMang_ChooseVariantTitle>
+  <ShinAndMang_ChooseVariantRandom>Random</ShinAndMang_ChooseVariantRandom>
 </LanguageData>

@@ -22,6 +22,8 @@ namespace ShinAndMang
 
         private const int CheckIntervalTicks = 250;
 
+        private bool variantConfirmed;
+
         /// <summary>
         /// How many Mang (望) rings the player wants formed: used by Form Mang (望) and by automatic formation.
         /// </summary>
@@ -53,6 +55,8 @@ namespace ShinAndMang
             base.PostTick();
             TickAutoFormation();
             if (!pawn.IsHashIntervalTick(CheckIntervalTicks)) return;
+            bool needsVariantChoice = !variantConfirmed && ShinAndMangMod.Settings.allowChoosingShinVariant && pawn.Spawned && pawn.Faction == Faction.OfPlayer;
+            if (needsVariantChoice && !Find.WindowStack.IsOpen(typeof(Dialog_ChooseShinVariant))) Find.WindowStack.Add(new Dialog_ChooseShinVariant(this));
             TryAutoActivateShin();
             if (!ModsConfig.RoyaltyActive || !pawn.Spawned) return;
             bool isMeditating = pawn.CurJobDef == JobDefOf.Meditate;
@@ -123,11 +127,30 @@ namespace ShinAndMang
         {
             base.PostAdd(dinfo);
             if (variant == null) variant = ShinMechanics.RollVariant();
-            if (pawn.Spawned && pawn.Faction != null && pawn.Faction.IsPlayer)
-            {
-                string variantLabel = variant?.label ?? "?";
-                Find.LetterStack.ReceiveLetter("ShinAndMang_LearnedShinLabel".Translate(), "ShinAndMang_LearnedShinText".Translate(pawn.LabelShort, variantLabel), LetterDefOf.PositiveEvent, pawn);
-            }
+            if (ShinAndMangMod.Settings.allowChoosingShinVariant) return; // the choice window confirms it and sends the letter
+            variantConfirmed = true;
+            SendLearnedShinLetter();
+        }
+
+        /// <summary>
+        /// Locks in the pawn's variant. A null choice keeps the random roll.
+        /// </summary>
+        public void ConfirmVariant(HediffDef chosenVariant)
+        {
+            ShinMechanics.EndShin(pawn);
+            if (chosenVariant != null) variant = chosenVariant;
+            variantConfirmed = true;
+            SendLearnedShinLetter();
+        }
+
+        /// <summary>
+        /// The "learned Shin (心)" letter, only for spawned player pawns.
+        /// </summary>
+        private void SendLearnedShinLetter()
+        {
+            if (!pawn.Spawned || pawn.Faction == null || !pawn.Faction.IsPlayer) return;
+            string variantLabel = variant?.label ?? "?";
+            Find.LetterStack.ReceiveLetter("ShinAndMang_LearnedShinLabel".Translate(), "ShinAndMang_LearnedShinText".Translate(pawn.LabelShort, variantLabel), LetterDefOf.PositiveEvent, pawn);
         }
 
         public override void ExposeData()
@@ -140,6 +163,8 @@ namespace ShinAndMang
 
             // Mastery corrupted to NaN by an older version: reset instead of staying broken.
             if (Scribe.mode == LoadSaveMode.PostLoadInit && float.IsNaN(Severity)) Severity = 0f;
+
+            Scribe_Values.Look(ref variantConfirmed, "variantConfirmed", true);
 
             Scribe_Values.Look(ref autoFormMang, "autoFormMang", true);
             Scribe_Values.Look(ref mangTargetRings, "mangTargetRings", 7);

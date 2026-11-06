@@ -49,6 +49,7 @@ namespace ShinAndMang
         public float shinActivationVolume = 1f;
         public float shinLoopVolume = 1f;
         public float mangRingsVolume = 1f;
+        public bool allowChoosingShinVariant = false;
         public override void ExposeData()
         {
             base.ExposeData();
@@ -68,6 +69,7 @@ namespace ShinAndMang
             Scribe_Values.Look(ref shinActivationVolume, "shinActivationVolume", 1f);
             Scribe_Values.Look(ref shinLoopVolume, "shinLoopVolume", 1f);
             Scribe_Values.Look(ref mangRingsVolume, "mangRingsVolume", 1f);
+            Scribe_Values.Look(ref allowChoosingShinVariant, "allowChoosingShinVariant", false);
         }
 
         /// <summary>

@@ -68,6 +68,7 @@
     <Compile Include="BodyShapeAnalyzer.cs" />
     <Compile Include="Command_MangTarget.cs" />
     <Compile Include="CompUseEffect_GainShin.cs" />
+    <Compile Include="Dialog_ChooseShinVariant.cs" />
     <Compile Include="Dihui Star.cs" />
     <Compile Include="Disgrace.cs" />
     <Compile Include="GameComponent_WeaponDrawCleanup.cs" />
