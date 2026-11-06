@@ -54,9 +54,8 @@ namespace ShinAndMang
         {
             base.PostTick();
             TickAutoFormation();
+            TryOpenVariantChoice();
             if (!pawn.IsHashIntervalTick(CheckIntervalTicks)) return;
-            bool needsVariantChoice = !variantConfirmed && ShinAndMangMod.Settings.allowChoosingShinVariant && pawn.Spawned && pawn.Faction == Faction.OfPlayer;
-            if (needsVariantChoice && !Find.WindowStack.IsOpen(typeof(Dialog_ChooseShinVariant))) Find.WindowStack.Add(new Dialog_ChooseShinVariant(this));
             TryAutoActivateShin();
             if (!ModsConfig.RoyaltyActive || !pawn.Spawned) return;
             bool isMeditating = pawn.CurJobDef == JobDefOf.Meditate;
@@ -127,7 +126,11 @@ namespace ShinAndMang
         {
             base.PostAdd(dinfo);
             if (variant == null) variant = ShinMechanics.RollVariant();
-            if (ShinAndMangMod.Settings.allowChoosingShinVariant) return; // the choice window confirms it and sends the letter
+            if (ShinAndMangMod.Settings.allowChoosingShinVariant && pawn.Faction == Faction.OfPlayer)
+            {
+                TryOpenVariantChoice();
+                return;
+            }
             variantConfirmed = true;
             SendLearnedShinLetter();
         }
@@ -151,6 +154,17 @@ namespace ShinAndMang
             if (!pawn.Spawned || pawn.Faction == null || !pawn.Faction.IsPlayer) return;
             string variantLabel = variant?.label ?? "?";
             Find.LetterStack.ReceiveLetter("ShinAndMang_LearnedShinLabel".Translate(), "ShinAndMang_LearnedShinText".Translate(pawn.LabelShort, variantLabel), LetterDefOf.PositiveEvent, pawn);
+        }
+
+        /// <summary>
+        /// Opens the variant choice window if this pawn still needs one and none is already open.
+        /// </summary>
+        private void TryOpenVariantChoice()
+        {
+            if (variantConfirmed || !ShinAndMangMod.Settings.allowChoosingShinVariant) return;
+            if (!pawn.Spawned || pawn.Faction != Faction.OfPlayer) return;
+            if (Find.WindowStack.IsOpen(typeof(Dialog_ChooseShinVariant))) return;
+            Find.WindowStack.Add(new Dialog_ChooseShinVariant(this));
         }
 
         public override void ExposeData()

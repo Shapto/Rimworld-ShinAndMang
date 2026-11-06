@@ -66,6 +66,8 @@
   <ShinAndMang_ExtraRingCost_SameAsSeventh>Cost the same as the seventh</ShinAndMang_ExtraRingCost_SameAsSeventh>
   <ShinAndMang_ExtraRingCost_Free>Cost no mood</ShinAndMang_ExtraRingCost_Free>
   <ShinAndMang_SettingMaximumMangRingsWarning>DANGEROUS! More than seven Mang (望) rings breaks balance, and hundreds can heavily lower performance</ShinAndMang_SettingMaximumMangRingsWarning>
+
+  <ShinAndMang_SettingAllowChoosingVariant>Choose Shin (心) variants</ShinAndMang_SettingAllowChoosingVariant>
   <ShinAndMang_SettingAllowChoosingVariantTooltip>When a colonist learns Shin (心) for the first time, choose their variant instead of getting a random one.</ShinAndMang_SettingAllowChoosingVariantTooltip>
   <ShinAndMang_ChooseVariantTitle>Choose {0}'s Shin (心)</ShinAndMang_ChooseVariantTitle>
   <ShinAndMang_ChooseVariantRandom>Random</ShinAndMang_ChooseVariantRandom>
