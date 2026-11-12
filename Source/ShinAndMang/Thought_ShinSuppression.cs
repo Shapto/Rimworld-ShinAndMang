@@ -18,58 +18,7 @@ namespace ShinAndMang
     /// <summary>While Shin (心) is active, cancels out the pawn's single worst negative thought group.</summary>
     public class Thought_ShinSuppression : Thought_Situational
     {
-        private static bool isCalculating;
-        private static readonly List<Thought> moodThoughtGroups = new List<Thought>();
-
-        private int cachedTick = -1;
-        private float cachedMoodOffset;
-
-        // Mood
-
-        public override float MoodOffset()
-        {
-            UpdateCache();
-            return cachedMoodOffset;
-        }
-
-        // Calculation
-        private void UpdateCache()
-        {
-            int currentTick = Find.TickManager.TicksGame;
-            if (cachedTick == currentTick || isCalculating) return;
-
-            isCalculating = true;
-            try
-            {
-                cachedTick = currentTick;
-                cachedMoodOffset = 0f;
-
-                ThoughtHandler thoughtHandler = pawn.needs?.mood?.thoughts;
-                if (thoughtHandler == null) return;
-
-                moodThoughtGroups.Clear();
-                thoughtHandler.GetDistinctMoodThoughtGroups(moodThoughtGroups);
-
-                float worstMoodOffset = 0f;
-                foreach (Thought thoughtGroup in moodThoughtGroups)
-                {
-                    if (thoughtGroup.def == def) continue;
-
-                    float groupMoodOffset = thoughtHandler.MoodOffsetOfGroup(thoughtGroup);
-                    if (!ShinMath.IsFinite(groupMoodOffset)) continue;
-                    if (groupMoodOffset < worstMoodOffset)
-                    {
-                        worstMoodOffset = groupMoodOffset;
-                    }
-                }
-
-                cachedMoodOffset = -worstMoodOffset;
-            }
-            finally
-            {
-                isCalculating = false;
-            }
-        }
+        public override float MoodOffset() => ShinMechanics.GetActiveShin(pawn)?.SuppressedMoodOffset ?? 0f;
     }
 
 }

@@ -20,9 +20,46 @@ namespace ShinAndMang
         private Sustainer loopSustainer;
         private float loopSustainerVolume;
         private Mote auraMote;
+        private const int SuppressionUpdateIntervalTicks = 30;
+        private static readonly List<Thought> moodThoughtGroups = new List<Thought>();
+        private float suppressedMoodOffset;
+
+        /// <summary>
+        /// Mood the suppression thought gives back: the size of the worst negative thought group.
+        /// </summary>
+        public float SuppressedMoodOffset => suppressedMoodOffset;
+
+        /// <summary>
+        /// Finds the worst negative thought group. Only called from this hediff's own tick and PostAdd, outside vanilla's mood math.
+        /// </summary>
+        private void UpdateSuppressedMoodOffset()
+        {
+            ThoughtHandler thoughtHandler = pawn.needs?.mood?.thoughts;
+            if (thoughtHandler == null)
+            {
+                suppressedMoodOffset = 0f;
+                return;
+            }
+
+            moodThoughtGroups.Clear();
+            thoughtHandler.GetDistinctMoodThoughtGroups(moodThoughtGroups);
+
+            float worstMoodOffset = 0f;
+            foreach (Thought thoughtGroup in moodThoughtGroups)
+            {
+                if (thoughtGroup is Thought_ShinSuppression) continue;
+                float groupMoodOffset = thoughtHandler.MoodOffsetOfGroup(thoughtGroup);
+                if (ShinMath.IsFinite(groupMoodOffset) && groupMoodOffset < worstMoodOffset) worstMoodOffset = groupMoodOffset;
+            }
+
+            moodThoughtGroups.Clear();
+            suppressedMoodOffset = -worstMoodOffset;
+        }
+
         public override void PostTick()
         {
             base.PostTick();
+            if (pawn.IsHashIntervalTick(SuppressionUpdateIntervalTicks)) UpdateSuppressedMoodOffset();
             if (pawn.Spawned)
             {
                 if (auraMote == null || auraMote.Destroyed) auraMote = MoteMaker.MakeAttachedOverlay(pawn, ShinDefOf.Mote_ShinAura, Vector3.zero);
@@ -52,6 +89,7 @@ namespace ShinAndMang
         public override void PostAdd(DamageInfo? dinfo)
         {
             base.PostAdd(dinfo);
+            UpdateSuppressedMoodOffset();
             if (pawn.Spawned) ShinAndMangSoundPlayer.PlayOneShot(ShinDefOf.Shin_Add, pawn, ShinAndMangSoundCategory.ShinActivation);
         }
 
