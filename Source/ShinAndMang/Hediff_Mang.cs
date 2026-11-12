@@ -19,6 +19,20 @@ namespace ShinAndMang
         public int RingCount => Mathf.RoundToInt(Severity);
         public MangSettings Settings => def.GetModExtension<MangSettings>();
 
+        public override float Severity
+        {
+            get => base.Severity;
+            set
+            {
+                if (!ShinMath.IsFinite(value))
+                {
+                    Log.ErrorOnce($"[Shin and Mang] Blocked invalid Mang rings ({value}) on {pawn?.LabelShort}.\n{Environment.StackTrace}", (pawn?.thingIDNumber ?? 0) ^ 0x4D53);
+                    return;
+                }
+                base.Severity = value;
+            }
+        }
+
         // Rings
 
         /// <summary>
@@ -67,6 +81,7 @@ namespace ShinAndMang
         {
             base.ExposeData();
             Scribe_Values.Look(ref ticksUntilFade, "ticksUntilFade", 1500);
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && !ShinMath.IsFinite(Severity)) Severity = 0f;
         }
     }
 }

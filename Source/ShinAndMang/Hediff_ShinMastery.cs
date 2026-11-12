@@ -38,6 +38,23 @@ namespace ShinAndMang
 
         private const int AutoTicksPerRing = 8;   // during a windup, about 7 rings per second
 
+        private float lastValidMastery;
+
+        public override float Severity
+        {
+            get => base.Severity;
+            set
+            {
+                if (!ShinMath.IsFinite(value))
+                {
+                    Log.ErrorOnce($"[Shin and Mang] Blocked invalid Shin mastery ({value}) on {pawn?.LabelShort}.\n{Environment.StackTrace}", (pawn?.thingIDNumber ?? 0) ^ 0x4D53);
+                    value = ShinMath.IsFinite(base.Severity) ? base.Severity : lastValidMastery;
+                }
+                base.Severity = value;
+                lastValidMastery = base.Severity;
+            }
+        }
+
         // "Shin (心) Sovereign (100%)"
         public override string LabelInBrackets
         {
@@ -182,6 +199,9 @@ namespace ShinAndMang
 
             Scribe_Values.Look(ref autoFormMang, "autoFormMang", true);
             Scribe_Values.Look(ref mangTargetRings, "mangTargetRings", 7);
+            Scribe_Values.Look(ref lastValidMastery, "lastValidMastery", 0f);
+
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && !ShinMath.IsFinite(Severity)) Severity = lastValidMastery;
         }
 
     }

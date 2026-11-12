@@ -53,10 +53,10 @@ namespace ShinAndMang
                 float worstMoodOffset = 0f;
                 foreach (Thought thoughtGroup in moodThoughtGroups)
                 {
-                    // Skip ourselves: asking our own offset here would loop forever.
                     if (thoughtGroup.def == def) continue;
 
                     float groupMoodOffset = thoughtHandler.MoodOffsetOfGroup(thoughtGroup);
+                    if (!ShinMath.IsFinite(groupMoodOffset)) continue;
                     if (groupMoodOffset < worstMoodOffset)
                     {
                         worstMoodOffset = groupMoodOffset;

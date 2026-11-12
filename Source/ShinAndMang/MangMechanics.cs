@@ -66,6 +66,7 @@ namespace ShinAndMang
         {
             MangSettings settings = ShinDefOf.Mang_Rings.GetModExtension<MangSettings>();
             Hediff_ShinMastery mastery = ShinMechanics.GetMastery(pawn);
+            if (float.IsNaN(mastery.Severity)) Log.ErrorOnce($"[Shin and Mang] NaN Shin mastery on {pawn.LabelShort}.", pawn.thingIDNumber ^ 0x4D53);
             if (settings?.baseCostByMastery == null || mastery == null) return float.MaxValue;
 
             int doublings = ringNumber - 1;
@@ -230,7 +231,8 @@ namespace ShinAndMang
         public static float DamageMultiplier(int ringCount)
         {
             float multiplierPerRing = ShinDefOf.Mang_Rings.GetModExtension<MangSettings>()?.damageMultiplierPerRing ?? 1.35f;
-            return Mathf.Pow(multiplierPerRing, ringCount);
+            float damageMultiplier = Mathf.Pow(multiplierPerRing, Mathf.Max(0, ringCount));
+            return float.IsNaN(damageMultiplier) ? 1f : Mathf.Min(damageMultiplier, MaximumSafeDamage);
         }
 
         /// <summary>
@@ -238,8 +240,9 @@ namespace ShinAndMang
         /// </summary>
         public static float MultipliedDamage(float baseDamage, int ringCount)
         {
-            if (baseDamage <= 0f) return baseDamage;
-            return Mathf.Min(baseDamage * DamageMultiplier(ringCount), MaximumSafeDamage);
+            if (!(baseDamage > 0f)) return ShinMath.Finite(baseDamage, 0f);
+            float multipliedDamage = baseDamage * DamageMultiplier(ringCount);
+            return float.IsNaN(multipliedDamage) ? baseDamage : Mathf.Min(multipliedDamage, MaximumSafeDamage);
         }
 
         public static void BeginStrike(Pawn pawn, int ringCount) => activeStrikes[pawn] = new ActiveStrike { ringCount = ringCount };

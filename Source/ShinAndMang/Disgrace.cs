@@ -81,7 +81,7 @@ namespace ShinAndMang
         public override void Notify_DamageTaken(DamageInfo damageInfo, DamageWorker.DamageResult damageResult)
         {
             if (ShinUser.Dead) return;
-            shame = Mathf.Min(1f, shame + damageResult.totalDamageDealt / DamageTakenForFullShame);
+            shame = Mathf.Min(1f, shame + ShinMath.Finite(damageResult.totalDamageDealt, 0f) / DamageTakenForFullShame);
         }
 
         // Stats
@@ -115,7 +115,7 @@ namespace ShinAndMang
         public override void CompExposeData()
         {
             base.CompExposeData();
-            Scribe_Values.Look(ref shame, "shame", 0f);
+            if (Scribe.mode == LoadSaveMode.PostLoadInit) shame = ShinMath.Finite(shame, 0f);
         }
     }
 }

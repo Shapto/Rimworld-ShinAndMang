@@ -71,13 +71,21 @@ namespace ShinAndMang
                 if (dinfo.Instigator is Pawn attacker)
                 {
                     foreach (ShinVariant variant in ShinVariantHooks.ActiveVariants(attacker))
+                    {
+                        float amountBeforeVariant = dinfo.Amount;
                         variant.ModifyOutgoingDamage(__instance, ref dinfo);
+                        if (!ShinMath.IsFinite(dinfo.Amount)) dinfo.SetAmount(amountBeforeVariant);
+                    }
                 }
 
                 if (__instance is Pawn victim)
                 {
                     foreach (ShinVariant variant in ShinVariantHooks.ActiveVariants(victim))
+                    {
+                        float amountBeforeVariant = dinfo.Amount;
                         variant.ModifyIncomingDamage(ref dinfo);
+                        if (!ShinMath.IsFinite(dinfo.Amount)) dinfo.SetAmount(amountBeforeVariant);
+                    }
                 }
             }
 

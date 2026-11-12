@@ -70,6 +70,15 @@ namespace ShinAndMang
             Scribe_Values.Look(ref shinLoopVolume, "shinLoopVolume", 1f);
             Scribe_Values.Look(ref mangRingsVolume, "mangRingsVolume", 1f);
             Scribe_Values.Look(ref allowChoosingShinVariant, "allowChoosingShinVariant", false);
+            if (Scribe.mode == LoadSaveMode.LoadingVars)
+            {
+                masteryGainMultiplier = ShinMath.Finite(masteryGainMultiplier, 1f);
+                shinSpawnChance = ShinMath.Finite(shinSpawnChance, 0.01f);
+                noviceSharpArmor = ShinMath.Finite(noviceSharpArmor, 0.30f);
+                sovereignSharpArmor = ShinMath.Finite(sovereignSharpArmor, 1.20f);
+                noviceBluntArmor = ShinMath.Finite(noviceBluntArmor, 0.15f);
+                sovereignBluntArmor = ShinMath.Finite(sovereignBluntArmor, 0.80f);
+            }
         }
 
         /// <summary>

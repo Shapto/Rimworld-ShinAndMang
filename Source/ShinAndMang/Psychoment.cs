@@ -42,7 +42,7 @@ namespace ShinAndMang
 
         public override void Notify_MoodSpent(float moodSpent)
         {
-            protection = Mathf.Min(MaximumProtection, protection + moodSpent * ProtectionPerMoodSpent);
+            protection = Mathf.Min(MaximumProtection, protection + ShinMath.Finite(moodSpent, 0f) * ProtectionPerMoodSpent);
         }
 
         // Lifecycle
@@ -91,7 +91,7 @@ namespace ShinAndMang
         public override void CompExposeData()
         {
             base.CompExposeData();
-            Scribe_Values.Look(ref protection, "protection", 0f);
+            if (Scribe.mode == LoadSaveMode.PostLoadInit) protection = ShinMath.Finite(protection, 0f);
         }
     }
 }

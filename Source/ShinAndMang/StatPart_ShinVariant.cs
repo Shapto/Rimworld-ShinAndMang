@@ -19,8 +19,8 @@ namespace ShinAndMang
 
             foreach (ShinVariant variant in ShinVariantHooks.ActiveVariants(pawn))
             {
-                value += variant.GetStatOffset(parentStat);
-                value *= variant.GetStatFactor(parentStat);
+                value += ShinMath.Finite(variant.GetStatOffset(parentStat), 0f);
+                value *= ShinMath.Finite(variant.GetStatFactor(parentStat), 1f);
             }
         }
 
