@@ -28,7 +28,14 @@ namespace ShinAndMang
         /// <summary>
         /// Mastery from 0 to 1, for effects that grow with every percent.
         /// </summary>
-        public float MasteryProgress => Mastery?.Severity ?? 0f;
+        public float MasteryProgress
+        {
+            get
+            {
+                float masterySeverity = Mastery?.Severity ?? 0f;
+                return float.IsNaN(masterySeverity) ? 0f : masterySeverity;
+            }
+        }
 
         /// <summary>
         /// Mastery rank from 0 (novice) to 7 (Sovereign), for effects that step up per rank.

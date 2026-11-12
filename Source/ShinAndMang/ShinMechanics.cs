@@ -156,7 +156,13 @@ namespace ShinAndMang
         public static void SpendMood(Pawn pawn, float moodCost)
         {
             Need_Mood mood = pawn.needs?.mood;
-            if (mood == null || moodCost <= 0f) return;
+            if (mood == null) return;
+            if (float.IsNaN(moodCost))
+            {
+                Log.ErrorOnce($"[Shin and Mang] NaN mood cost for {pawn.LabelShort} (mastery severity {GetMastery(pawn)?.Severity}). Skipped.", pawn.thingIDNumber ^ 0x4D4F);
+                return;
+            }
+            if (moodCost <= 0f) return;
 
             float moodBefore = mood.CurLevel;
             mood.CurLevel -= moodCost;
@@ -181,7 +187,7 @@ namespace ShinAndMang
             if (mood == null) { disabledReason = "ShinAndMang_NoMood".Translate(); return false; }
 
             float moodCost = ActivationMoodCost(pawn);
-            if (mood.CurLevel < moodCost)
+            if (!(mood.CurLevel >= moodCost))
             {
                 disabledReason = "ShinAndMang_NotEnoughMood".Translate(mood.CurLevel.ToStringPercent(), moodCost.ToStringPercent());
                 return false;

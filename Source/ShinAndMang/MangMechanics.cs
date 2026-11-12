@@ -118,7 +118,7 @@ namespace ShinAndMang
             if (mood == null) { reason = "ShinAndMang_NoMood".Translate(); return false; }
 
             float nextRingCost = RingCost(pawn, CurrentRings(pawn) + 1);
-            if (mood.CurLevel < nextRingCost) { reason = "ShinAndMang_NotEnoughMood".Translate(mood.CurLevel.ToStringPercent(), nextRingCost.ToStringPercent()); return false; }
+            if (!(mood.CurLevel >= nextRingCost)) { reason = "ShinAndMang_NotEnoughMood".Translate(mood.CurLevel.ToStringPercent(), nextRingCost.ToStringPercent()); return false; }
 
             return true;
         }
