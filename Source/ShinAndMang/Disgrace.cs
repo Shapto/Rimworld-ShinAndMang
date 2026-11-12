@@ -115,6 +115,7 @@ namespace ShinAndMang
         public override void CompExposeData()
         {
             base.CompExposeData();
+            Scribe_Values.Look(ref shame, "shame", 0f);
             if (Scribe.mode == LoadSaveMode.PostLoadInit) shame = ShinMath.Finite(shame, 0f);
         }
     }

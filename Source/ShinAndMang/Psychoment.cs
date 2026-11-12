@@ -91,6 +91,7 @@ namespace ShinAndMang
         public override void CompExposeData()
         {
             base.CompExposeData();
+            Scribe_Values.Look(ref protection, "protection", 0f);
             if (Scribe.mode == LoadSaveMode.PostLoadInit) protection = ShinMath.Finite(protection, 0f);
         }
     }

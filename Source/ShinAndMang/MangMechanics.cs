@@ -66,8 +66,8 @@ namespace ShinAndMang
         {
             MangSettings settings = ShinDefOf.Mang_Rings.GetModExtension<MangSettings>();
             Hediff_ShinMastery mastery = ShinMechanics.GetMastery(pawn);
-            if (float.IsNaN(mastery.Severity)) Log.ErrorOnce($"[Shin and Mang] NaN Shin mastery on {pawn.LabelShort}.", pawn.thingIDNumber ^ 0x4D53);
             if (settings?.baseCostByMastery == null || mastery == null) return float.MaxValue;
+            if (float.IsNaN(mastery.Severity)) Log.ErrorOnce($"[Shin and Mang] NaN Shin mastery on {pawn.LabelShort}.", pawn.thingIDNumber ^ 0x4D43);
 
             int doublings = ringNumber - 1;
             if (ringNumber > 7)

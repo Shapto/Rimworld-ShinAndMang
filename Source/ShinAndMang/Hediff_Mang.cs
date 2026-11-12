@@ -26,7 +26,7 @@ namespace ShinAndMang
             {
                 if (!ShinMath.IsFinite(value))
                 {
-                    Log.ErrorOnce($"[Shin and Mang] Blocked invalid Mang rings ({value}) on {pawn?.LabelShort}.\n{Environment.StackTrace}", (pawn?.thingIDNumber ?? 0) ^ 0x4D53);
+                    Log.ErrorOnce($"[Shin and Mang] Blocked invalid Mang rings ({value}) on {pawn?.LabelShort}.\n{Environment.StackTrace}", (pawn?.thingIDNumber ?? 0) ^ 0x4D52);
                     return;
                 }
                 base.Severity = value;
