@@ -25,6 +25,7 @@ namespace ShinAndMang
         public static readonly Texture2D MangCountSettingIcon = ContentFinder<Texture2D>.Get("Icons/MangCountSetting");
     }
 
+    [StaticConstructorOnStartup]
     public class HediffComp_ShinActivation : HediffComp
     {
         private static Texture2D cachedIcon;
